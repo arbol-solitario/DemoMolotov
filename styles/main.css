@@ -1,0 +1,84 @@
+*, html {
+    margin:0;
+    padding:0;  
+}
+
+body{
+    background-color: rgb(160, 163, 163);
+}
+
+#title{
+    text-align: center;
+	margin-top: 50px;
+    margin-bottom: 50px;
+	font-size: 35px;
+    height: 60px;
+	line-height: 60px;
+    color: rgb(13, 19, 29);;
+    background-color: rgb(84,93,109);
+    font-family: Serif;
+}
+
+.menu-object{
+    color: rgb(176, 184, 185);
+    display:block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 300px;
+	height: 75px;
+	font-size: 20px;
+	margin-top: 30px;
+    background-color: rgb(24,34,53);
+    font-family: 'Courier New', monospace;
+}
+
+button.menu-object:active{
+	font-size: 18px;
+	width: 275px;
+	height: 70px;
+	background-color: rgb(16, 22, 34);
+}
+
+button.menu-object:hover:not(:active){
+	font-size: 22px;
+	width: 325px;
+	height: 85px;
+	background-color: rgb(35, 50, 77);
+}
+.menu{
+    height: 500px;
+    width: 400px;
+    background-color: rgb(84,93,109);
+    border: 8px solid rgb(207, 205, 205);
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 70px;
+}
+
+.esquerra{
+    background-color: rgb(24,34,53);
+    float: left;
+    height: 850px;
+    width: 300px;
+    margin-left: 0px;
+}
+
+.dreta{
+    background-color: rgb(24,34,53);
+    float: right;
+    height: 850px;
+    width: 300px;
+}
+
+.peu{
+    margin-top: 100px;
+    background-color: rgb(24,34,53);
+    height: 300px;
+}
+
+h1{
+    text-align: center;
+    background-color: rgb(116,120,124);
+    line-height: 100px;
+    color: rgb(32, 32, 32);
+}
