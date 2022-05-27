@@ -5,7 +5,7 @@ function loadpage(page){
 function new_game(){
 	var name = prompt("User name");
 	
-    while (name==""){
+    while (name=="" || !name){
         name = prompt("User name");
     }
 	sessionStorage.setItem("username", name);
