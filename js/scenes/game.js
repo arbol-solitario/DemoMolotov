@@ -64,7 +64,7 @@ class GameScene extends Phaser.Scene {
         this.cursors.S=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S,true,true);
         this.cursors.W=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W,true,true);
 
-        this.input.on('pointerdown', function (pointer) {
+        this.input.on('pointerdown', (pointer) => {
 
             this.disparar(pointer.x,pointer.y);
     
@@ -76,9 +76,10 @@ class GameScene extends Phaser.Scene {
         if(this.player.cooldown==false){
             this.player.cooldown=true;
             this.player.accio="atacar";
-            var posratoli= new Phaser.Math.Vector2(posx,posy);
+            var posicio= new Phaser.Math.Vector2(posx,posy);
             var direccio=new Phaser.Math.Vector2();
-            direccio=posratoli.substract(this.player.position);
+            console.log(this.player.position);
+            direccio=posicio.substract(posicio);
             //direccio.normalize();
             console.log(direccio.x);
         }
