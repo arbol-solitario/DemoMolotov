@@ -10,7 +10,7 @@ function new_game(){
     }
 	sessionStorage.setItem("username", name);
 	
-	loadpage("./html/phasergame.html");
+	loadpage("./html/game.html");
 }
 
 function load_game(){
