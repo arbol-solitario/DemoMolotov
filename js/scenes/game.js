@@ -8,6 +8,7 @@ class GameScene extends Phaser.Scene {
     preload (){	
         this.load.spritesheet('ma_caminar','../../resources/sense_arma/caminar_ma.png',{frameWidth: 279, frameHeight: 219});
         this.load.spritesheet('ma_quiet','../../resources/sense_arma/quiet_ma.png',{frameWidth: 289, frameHeight: 224});
+        this.load.spritesheet('ma_atac','../../resources/sense_arma/atacar_ma.png',{frameWidth: 329, frameHeight: 300});
         this.load.spritesheet('pistola_caminar','../../resources/pistola/caminar_pistola.png',{frameWidth: 258, frameHeight: 220});
         this.load.spritesheet('pistola_quiet','../../resources/pistola/quiet_pistola.png',{frameWidth: 253, frameHeight: 216});
 
@@ -44,6 +45,12 @@ class GameScene extends Phaser.Scene {
             repeat: -1
         });
         this.anims.create ({
+            key: 'atac_ma',
+            frames: this.anims.generateFrameNumbers('ma_atac', { start: 0, end: 14 }),
+            frameRate: 20,
+            repeat: 0
+        });
+        this.anims.create ({
             key: 'caminar_pistola',
             frames: this.anims.generateFrameNumbers('pistola_caminar', { start: 0, end: 19 }),
             frameRate: 30,
@@ -74,7 +81,7 @@ class GameScene extends Phaser.Scene {
 	}
     
     disparar(posx,posy){
-        if(this.player.cooldown_disparar==false){
+        if(!this.player.cooldown_disparar){
             this.player.cooldown_disparar=true;
             this.player.cooldown_animacio=true;
             this.player.accio="atacar";
@@ -84,10 +91,27 @@ class GameScene extends Phaser.Scene {
             direccio.normalize();
             var angle=direccio.angle();
             angle=angle/Math.PI*180;
-            this.player.body.rotation=angle;
-            console.log(this.player.body.rotation);
+            this.player.angle=angle;
+            if(this.player.arma.nom=="ganivet" || (this.player.arma.bales == 0 && this.player.arma.municio == 0)){//si s'ha de fer atac cos
+                this.atac_cos(direccio);
+            } 
+            else{
+                this.atac_distancia(direccio);
+            }
         }
     }
+
+    atac_cos(dir){
+        if (this.player.arma.nom=="ganivet"){
+            this.player.anims.play('atac_ma');
+        }
+        
+    }
+
+    atac_distancia(dir){
+        
+    }
+    
 	
 	update (){	
         if(this.cursors.D.isDown){
@@ -97,66 +121,66 @@ class GameScene extends Phaser.Scene {
             }
             this.player.accio="dreta";
             if(this.cursors.S.isDown){
-                if(!this.player.cooldown_animacio) this.player.body.rotation=45;
+                if(!this.player.cooldown_animacio) this.player.angle=45;
                 this.player.setVelocityX(Math.sqrt(Math.pow(this.player.velocitat,2)/2)); //perque el modul de la velocitat sigui el que ha de ser ja que sino aniria mes ràpid en diagonal
                 this.player.setVelocityY(Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else if(this.cursors.W.isDown){
-                if(!this.player.cooldown_animacio) this.player.body.rotation=-45;
+                if(!this.player.cooldown_animacio) this.player.angle=-45;
                 this.player.setVelocityX(Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
                 this.player.setVelocityY(-Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else{
-                if(!this.player.cooldown_animacio) this.player.body.rotation=0;
+                if(!this.player.cooldown_animacio) this.player.angle=0;
                 this.player.setVelocityX(this.player.velocitat);
                 this.player.setVelocityY(0);
             }
         } 
         else if(this.cursors.A.isDown){
-            if(this.player.accio=="quiet"){
+            if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
                 this.player.anims.play('caminar_ma');
             }
             this.player.accio="esquerra";
             if(this.cursors.S.isDown){
-                if(!this.player.cooldown_animacio) this.player.body.rotation=135;
+                if(!this.player.cooldown_animacio) this.player.angle=135;
                 this.player.setVelocityX(-Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
                 this.player.setVelocityY(Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else if(this.cursors.W.isDown){
-                if(!this.player.cooldown_animacio) this.player.body.rotation=225;
+                if(!this.player.cooldown_animacio) this.player.angle=225;
                 this.player.setVelocityX(-Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
                 this.player.setVelocityY(-Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else{
-                if(!this.player.cooldown_animacio) this.player.body.rotation=180;
+                if(!this.player.cooldown_animacio) this.player.angle=180;
                 this.player.setVelocityX(-this.player.velocitat);
                 this.player.setVelocityY(0);
             }
         } 
         else if(this.cursors.S.isDown){
-            if(this.player.accio=="quiet"){
+            if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
                 this.player.anims.play('caminar_ma');
             }
             this.player.accio="avall";
-            if(!this.player.cooldown_animacio) this.player.body.rotation=90;
+            if(!this.player.cooldown_animacio) this.player.angle=90;
             this.player.setVelocityY(this.player.velocitat);
             this.player.setVelocityX(0);
         } 
         else if(this.cursors.W.isDown){
-            if(this.player.accio=="quiet"){
+            if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
                 this.player.anims.play('caminar_ma');
             }
             this.player.accio="amunt";
-            if(!this.player.cooldown_animacio) this.player.body.rotation=-90;
+            if(!this.player.cooldown_animacio) this.player.angle=-90;
             this.player.setVelocityY(-this.player.velocitat);
             this.player.setVelocityX(0);
         } 
         else{//no es presiona cap tecla de moviment
             if (this.player.accio!="quiet"){
+                if(this.player.accio!="atacar" || this.player.cooldown_animacio==false)  this.player.anims.play('quiet_ma');
                 this.player.accio="quiet";
                 this.player.setVelocityY(0);
                 this.player.setVelocityX(0);
-                this.player.anims.play('quiet_ma');
             }
         }
     }
