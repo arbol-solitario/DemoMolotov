@@ -1,11 +1,30 @@
 class GameScene extends Phaser.Scene {
     constructor (){
         super('GameScene');
+        this.escala_personatge=0.3;
         this.player=null;
         this.cursors=null;
         this.bales_aliades=null;
-        this.pistola=null; //per guardar estadistiques
-        this.ganivet=null; //per guardar estadístiques
+        this.pistola={
+            nom: "pistola",
+            pos_relativa: new Phaser.Math.Vector2(128,76).scale(this.escala_personatge), //punta arma respecte al centre del cos
+            centre_cos: new Phaser.Math.Vector2(128,108).scale(this.escala_personatge),
+            bales: 1,
+            municio: 0,
+            cadencia: 400,
+            min_cadencia:150,
+            vel_bala: 500,
+            dispersio: 7,
+            rang: 600,
+            velocitat_recarrega: 2500,
+            velocitat_recarrega_min: 800
+        }; //per guardar estadistiques
+        this.ganivet={
+            nom: "ganivet",
+            centre_cos: new Phaser.Math.Vector2(128,108).scale(this.escala_personatge),
+            cadencia: 800,
+            min_cadencia:400
+        }; //per guardar estadístiques segons es pujen
     }
 
     preload (){	
@@ -21,33 +40,15 @@ class GameScene extends Phaser.Scene {
 
 	}
     create (){	
-        this.player = this.physics.add.sprite(400,300,'pistola_quiet').setScale(0.5).refreshBody(); //Hauré de posar una imatge diferent perquè no afecti el braç a la hitbox per exemple
+        this.player = this.physics.add.sprite(400,300,'pistola_quiet').setScale(this.escala_personatge).refreshBody(); //Hauré de posar una imatge diferent perquè no afecti el braç a la hitbox per exemple
         this.bales_aliades = this.physics.add.group();
+
+        //atributs player
         this.player.setBounce(0.2);
         this.player.accio="quiet";
         this.player.velocitat=120;
         this.player.cooldown_disparar=false;
         this.player.cooldown_animacio=false;
-        var ganivet = {
-            nom: "ganivet",
-            cadencia: 800,
-            min_cadencia:400
-        };
-        this.ganivet=ganivet;
-        var pistola = {
-            nom: "pistola",
-            pos_relativa: new Phaser.Math.Vector2(128,76), //punta arma respecte el cos
-            bales: 1,
-            municio: 0,
-            cadencia: 400,
-            min_cadencia:150,
-            vel_bala: 300,
-            dispersio: 4,
-            rang: 600,
-            velocitat_recarrega: 2500,
-            velocitat_recarrega_min: 800
-        };
-        this.pistola=pistola;
         this.player.arma=this.pistola;
 
         
@@ -127,7 +128,9 @@ class GameScene extends Phaser.Scene {
             this.player.accio="atacar";
             var posicio= new Phaser.Math.Vector2(posx,posy);
             var direccio=new Phaser.Math.Vector2();
-            direccio=posicio.subtract(this.player.body.position);
+            var centre_cos= this.player.arma.centre_cos.clone();
+            centre_cos.add(this.player.body.position);
+            direccio=posicio.subtract(centre_cos);
             direccio.normalize();
             var angle=direccio.angle();
             angle=angle/Math.PI*180;
@@ -144,7 +147,7 @@ class GameScene extends Phaser.Scene {
                     this.player.angle=angle;
                     var pos_pistola=this.player.arma.pos_relativa.clone();
                     pos_pistola.rotate((this.player.angle/180)*Math.PI);
-                    pos_pistola=pos_pistola.add(this.player.body.position);
+                    pos_pistola=pos_pistola.add(centre_cos);
                     posicio= new Phaser.Math.Vector2(posx,posy);
                     direccio=posicio.subtract(pos_pistola);
                     this.atac_distancia(direccio,pos_pistola);
@@ -191,7 +194,9 @@ class GameScene extends Phaser.Scene {
     }
 
     afegir_bala(pos_inicial,dir,vel,rang,tipus){
-        var bala=this.bales_aliades.create(pos_inicial.x,pos_inicial.y,'bala_aliada_pistola');
+        var angle=dir.angle();
+        var bala=this.bales_aliades.create(pos_inicial.x,pos_inicial.y,'bala_aliada_pistola').setScale(this.escala_personatge).setRotation(angle).refreshBody();
+        bala.setVelocity(dir.x*vel,dir.y*vel);
     }
 
     atac_distancia(dir,pos){
