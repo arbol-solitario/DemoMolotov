@@ -15,6 +15,7 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('pistola_quiet','../../resources/pistola/quiet_pistola.png',{frameWidth: 253, frameHeight: 216});
         this.load.spritesheet('pistola_atac','../../resources/pistola/atacar_pistola.png',{frameWidth: 255, frameHeight: 215});
         this.load.spritesheet('pistola_cop','../../resources/pistola/golpejar_pistola.png',{frameWidth: 291, frameHeight: 256});
+        this.load.spritesheet('pistola_recarregar','../../resources/pistola/recarregar_pistola.png',{frameWidth: 260, frameHeight: 230});
 
 	}
     create (){	
@@ -32,10 +33,12 @@ class GameScene extends Phaser.Scene {
         this.ganivet=ganivet;
         var pistola = {
             nom: "pistola",
-            bales: 0,
+            bales: 1,
             municio: 0,
             cadencia: 400,
-            min_cadencia:150
+            min_cadencia:150,
+            velocitat_recarrega: 2500,
+            velocitat_recarrega_min: 800
         };
         this.pistola=pistola;
         this.player.arma=this.pistola;
@@ -86,6 +89,12 @@ class GameScene extends Phaser.Scene {
             frameRate: 30,
             repeat: 0
         });
+        this.anims.create ({
+            key: 'recarregar_pistola',
+            frames: this.anims.generateFrameNumbers('pistola_recarregar', { start: 0, end: 13 }),
+            frameRate: 30,
+            repeat: 0
+        });
         this.player.anims.play('quiet_ma');
 
 
@@ -115,13 +124,17 @@ class GameScene extends Phaser.Scene {
             direccio.normalize();
             var angle=direccio.angle();
             angle=angle/Math.PI*180;
-            this.player.angle=angle;
             if(this.player.arma.nom=="ganivet" || (this.player.arma.bales == 0 && this.player.arma.municio == 0)){//si s'ha de fer atac cos
+                this.player.angle=angle;
                 this.atac_cos(direccio);
             } 
             else{
-                if (this.player.arma.bales==0) this.recarregar();
+                if (this.player.arma.bales==0){
+                    this.player.accio="recarregar";
+                    this.recarregar();
+                } 
                 else{
+                    this.player.angle=angle;
                     this.atac_distancia(direccio);
                 }
             }
@@ -129,6 +142,14 @@ class GameScene extends Phaser.Scene {
     }
 
     recarregar(){
+        if(this.player.arma.nom=="pistola"){
+            this.player.anims.play('recarregar_pistola');
+            this.player.anims.msPerFrame  = this.player.arma.velocitat_recarrega/15;//canvio la velocitat de l'animacio segons la velocitat de recarrega
+            var timedEvent = new Phaser.Time.TimerEvent({ delay: this.player.arma.velocitat_recarrega, callback: this.cooldown_animacio_reset, callbackScope: this});
+            var timedEvent2 = new Phaser.Time.TimerEvent({ delay: this.player.arma.velocitat_recarrega, callback: this.cooldown_disparar_reset, callbackScope: this});
+            this.time.addEvent(timedEvent);
+            this.time.addEvent(timedEvent2);
+        }
 
     }
 
@@ -176,17 +197,17 @@ class GameScene extends Phaser.Scene {
                 this.player.accio="dreta";
             }
             if(this.cursors.S.isDown){
-                if(!this.player.cooldown_animacio) this.player.angle=45;
+                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=45;
                 this.player.setVelocityX(Math.sqrt(Math.pow(this.player.velocitat,2)/2)); //perque el modul de la velocitat sigui el que ha de ser ja que sino aniria mes ràpid en diagonal
                 this.player.setVelocityY(Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else if(this.cursors.W.isDown){
-                if(!this.player.cooldown_animacio) this.player.angle=-45;
+                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=-45;
                 this.player.setVelocityX(Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
                 this.player.setVelocityY(-Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else{
-                if(!this.player.cooldown_animacio) this.player.angle=0;
+                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=0;
                 this.player.setVelocityX(this.player.velocitat);
                 this.player.setVelocityY(0);
             }
@@ -198,17 +219,17 @@ class GameScene extends Phaser.Scene {
                 this.player.accio="esquerra";
             }
             if(this.cursors.S.isDown){
-                if(!this.player.cooldown_animacio) this.player.angle=135;
+                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=135;
                 this.player.setVelocityX(-Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
                 this.player.setVelocityY(Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else if(this.cursors.W.isDown){
-                if(!this.player.cooldown_animacio) this.player.angle=225;
+                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=225;
                 this.player.setVelocityX(-Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
                 this.player.setVelocityY(-Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else{
-                if(!this.player.cooldown_animacio) this.player.angle=180;
+                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=180;
                 this.player.setVelocityX(-this.player.velocitat);
                 this.player.setVelocityY(0);
             }
@@ -219,7 +240,7 @@ class GameScene extends Phaser.Scene {
                 else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
                 this.player.accio="avall";
             }
-            if(!this.player.cooldown_animacio) this.player.angle=90;
+            if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=90;
             this.player.setVelocityY(this.player.velocitat);
             this.player.setVelocityX(0);
         } 
@@ -229,7 +250,7 @@ class GameScene extends Phaser.Scene {
                 else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
                 this.player.accio="amunt";
             }
-            if(!this.player.cooldown_animacio) this.player.angle=-90;
+            if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=-90;
             this.player.setVelocityY(-this.player.velocitat);
             this.player.setVelocityX(0);
         } 
