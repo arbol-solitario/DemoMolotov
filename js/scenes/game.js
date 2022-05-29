@@ -17,7 +17,8 @@ class GameScene extends Phaser.Scene {
         this.player.setBounce(0.2);
         this.player.accio="quiet";
         this.player.velocitat=120;
-        this.player.cooldown=false;
+        this.player.cooldown_disparar=false;
+        this.player.cooldown_animacio=false;
         var ganivet = {
             nom: "ganivet"
         };
@@ -73,37 +74,40 @@ class GameScene extends Phaser.Scene {
 	}
     
     disparar(posx,posy){
-        if(this.player.cooldown==false){
-            this.player.cooldown=true;
+        if(this.player.cooldown_disparar==false){
+            this.player.cooldown_disparar=true;
+            this.player.cooldown_animacio=true;
             this.player.accio="atacar";
             var posicio= new Phaser.Math.Vector2(posx,posy);
             var direccio=new Phaser.Math.Vector2();
-            console.log(this.player.position);
-            direccio=posicio.substract(posicio);
-            //direccio.normalize();
-            console.log(direccio.x);
+            direccio=posicio.subtract(this.player.body.position);
+            direccio.normalize();
+            var angle=direccio.angle();
+            angle=angle/Math.PI*180;
+            this.player.body.rotation=angle;
+            console.log(this.player.body.rotation);
         }
     }
 	
 	update (){	
         if(this.cursors.D.isDown){
-            if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown==false)){
+            if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
                 if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
                 else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
             }
             this.player.accio="dreta";
             if(this.cursors.S.isDown){
-                this.player.rotation=0.785;
+                if(!this.player.cooldown_animacio) this.player.body.rotation=45;
                 this.player.setVelocityX(Math.sqrt(Math.pow(this.player.velocitat,2)/2)); //perque el modul de la velocitat sigui el que ha de ser ja que sino aniria mes ràpid en diagonal
                 this.player.setVelocityY(Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else if(this.cursors.W.isDown){
-                this.player.rotation=-0.785;
+                if(!this.player.cooldown_animacio) this.player.body.rotation=-45;
                 this.player.setVelocityX(Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
                 this.player.setVelocityY(-Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else{
-                this.player.rotation=0;
+                if(!this.player.cooldown_animacio) this.player.body.rotation=0;
                 this.player.setVelocityX(this.player.velocitat);
                 this.player.setVelocityY(0);
             }
@@ -114,17 +118,17 @@ class GameScene extends Phaser.Scene {
             }
             this.player.accio="esquerra";
             if(this.cursors.S.isDown){
-                this.player.rotation=2.355;
+                if(!this.player.cooldown_animacio) this.player.body.rotation=135;
                 this.player.setVelocityX(-Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
                 this.player.setVelocityY(Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else if(this.cursors.W.isDown){
-                this.player.rotation=4.15;
+                if(!this.player.cooldown_animacio) this.player.body.rotation=225;
                 this.player.setVelocityX(-Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
                 this.player.setVelocityY(-Math.sqrt(Math.pow(this.player.velocitat,2)/2));
             }
             else{
-                this.player.rotation=3.14;
+                if(!this.player.cooldown_animacio) this.player.body.rotation=180;
                 this.player.setVelocityX(-this.player.velocitat);
                 this.player.setVelocityY(0);
             }
@@ -134,7 +138,7 @@ class GameScene extends Phaser.Scene {
                 this.player.anims.play('caminar_ma');
             }
             this.player.accio="avall";
-            this.player.rotation=1.57;
+            if(!this.player.cooldown_animacio) this.player.body.rotation=90;
             this.player.setVelocityY(this.player.velocitat);
             this.player.setVelocityX(0);
         } 
@@ -143,7 +147,7 @@ class GameScene extends Phaser.Scene {
                 this.player.anims.play('caminar_ma');
             }
             this.player.accio="amunt";
-            this.player.rotation=-1.57;
+            if(!this.player.cooldown_animacio) this.player.body.rotation=-90;
             this.player.setVelocityY(-this.player.velocitat);
             this.player.setVelocityX(0);
         } 
