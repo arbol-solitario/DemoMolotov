@@ -1,3 +1,5 @@
+"use srict";
+
 class GameScene extends Phaser.Scene {
     constructor (){
         super('GameScene');
@@ -10,10 +12,11 @@ class GameScene extends Phaser.Scene {
             pos_relativa: new Phaser.Math.Vector2(128,76).scale(this.escala_personatge), //punta arma respecte al centre del cos
             centre_cos: new Phaser.Math.Vector2(128,108).scale(this.escala_personatge),
             bales: 1,
-            municio: 0,
-            cadencia: 400,
+            municio: 10,
+            mida_cartutxo: 8,
+            cadencia: 600,
             min_cadencia:150,
-            vel_bala: 500,
+            vel_bala: 600,
             dispersio: 7,
             rang: 600,
             velocitat_recarrega: 2500,
@@ -46,7 +49,7 @@ class GameScene extends Phaser.Scene {
         //atributs player
         this.player.setBounce(0.2);
         this.player.accio="quiet";
-        this.player.velocitat=120;
+        this.player.velocitat=150;
         this.player.cooldown_disparar=false;
         this.player.cooldown_animacio=false;
         this.player.arma=this.pistola;
@@ -112,6 +115,7 @@ class GameScene extends Phaser.Scene {
         this.cursors.A=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A,true,true);
         this.cursors.S=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S,true,true);
         this.cursors.W=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W,true,true);
+        this.cursors.R=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R,true,true);
 
         this.input.on('pointerdown', (pointer) => {
 
@@ -165,6 +169,20 @@ class GameScene extends Phaser.Scene {
             this.time.addEvent(timedEvent);
             this.time.addEvent(timedEvent2);
         }
+        if(this.player.arma.municio>=this.player.arma.mida_cartutxo) {
+            if(this.player.arma.bales>0){
+                this.player.arma.municio=this.player.arma.municio-(this.player.arma.mida_cartutxo-this.player.arma.bales);
+                this.player.arma.bales+=this.player.arma.mida_cartutxo;
+            }
+            else{
+                this.player.arma.municio-=this.player.arma.mida_cartutxo;
+                this.player.arma.bales+=this.player.arma.mida_cartutxo;
+            }
+        }
+        else{
+            this.player.arma.bales+=this.player.arma.municio;
+            this.player.arma.municio=0;
+        }
 
     }
 
@@ -193,14 +211,18 @@ class GameScene extends Phaser.Scene {
         
     }
 
-    afegir_bala(pos_inicial,dir,vel,rang,tipus){
+    afegir_bala(pos_inicial,dir,vel,rang,bando,tipus){
         var angle=dir.angle();
-        var bala=this.bales_aliades.create(pos_inicial.x,pos_inicial.y,'bala_aliada_pistola').setScale(this.escala_personatge).setRotation(angle).refreshBody();
+        if (bando=="aliada")var bala=this.bales_aliades.create(pos_inicial.x,pos_inicial.y,'bala_aliada_pistola').setScale(this.escala_personatge*1.3).setRotation(angle).refreshBody();
         bala.setVelocity(dir.x*vel,dir.y*vel);
+        bala.tipus=tipus;
+        bala.pos_inicial=pos_inicial;
+        bala.rang=rang;
     }
 
     atac_distancia(dir,pos){
         if (this.player.arma.nom=="pistola"){
+            this.player.arma.bales--;
             this.player.anims.play('atac_pistola');
             var timedEvent = new Phaser.Time.TimerEvent({ delay: this.player.arma.cadencia, callback: this.cooldown_animacio_reset, callbackScope: this});
             var timedEvent2 = new Phaser.Time.TimerEvent({ delay: this.player.arma.cadencia, callback: this.cooldown_disparar_reset, callbackScope: this});
@@ -212,12 +234,22 @@ class GameScene extends Phaser.Scene {
             if(negatiu==0)direccio_final.rotate((-angle/180)*Math.PI);
             else direccio_final.rotate((angle/180)*Math.PI);
             direccio_final.normalize();
-            this.afegir_bala(pos,direccio_final,this.player.arma.vel_bala,this.player.arma.rang,"aliada");
+            this.afegir_bala(pos,direccio_final,this.player.arma.vel_bala,this.player.arma.rang,"aliada","normal");
         }
     }
     
 	
 	update (){	
+
+        if (this.cursors.R.isDown && this.player.accio!="recarregar" && !this.player.cooldown_disparar){
+            if(this.player.arma.bales<this.player.arma.mida_cartutxo && this.player.arma.municio>0){
+                this.player.cooldown_disparar=true;
+                this.player.cooldown_animacio=true;
+                this.player.accio="recarregar";
+                this.recarregar();
+            }
+        }
+
         if(this.cursors.D.isDown){
             if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
                 if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
@@ -293,6 +325,20 @@ class GameScene extends Phaser.Scene {
                 this.player.setVelocityX(0);
             }
         }
+
+
+
+
+
+        this.bales_aliades.children.iterate((child) =>{
+            if (child){//he fet això perquè per alguna raó iterava sobre child ja destruit, que valien undefined i petava al accedir al body
+                var pos=child.body.position.clone();
+                pos.subtract(child.pos_inicial);
+                var distancia=pos.length();
+                if (distancia>=child.rang) child.destroy();
+            }
+            
+        });
     }
 }
 
