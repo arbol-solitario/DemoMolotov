@@ -3,11 +3,13 @@ class GameScene extends Phaser.Scene {
         super('GameScene');
         this.player=null;
         this.cursors=null;
+        this.bales_aliades=null;
         this.pistola=null; //per guardar estadistiques
         this.ganivet=null; //per guardar estadístiques
     }
 
     preload (){	
+        this.load.image('bala_aliada_pistola','../../resources/bales/bala_aliada_pistola.png');
         this.load.spritesheet('ma_caminar','../../resources/sense_arma/caminar_ma.png',{frameWidth: 279, frameHeight: 219});
         this.load.spritesheet('ma_quiet','../../resources/sense_arma/quiet_ma.png',{frameWidth: 289, frameHeight: 224});
         this.load.spritesheet('ma_atac','../../resources/sense_arma/atacar_ma.png',{frameWidth: 329, frameHeight: 300});
@@ -19,7 +21,8 @@ class GameScene extends Phaser.Scene {
 
 	}
     create (){	
-        this.player = this.physics.add.sprite(400,300,'ma_caminar').setScale(0.5).refreshBody();
+        this.player = this.physics.add.sprite(400,300,'pistola_quiet').setScale(0.5).refreshBody(); //Hauré de posar una imatge diferent perquè no afecti el braç a la hitbox per exemple
+        this.bales_aliades = this.physics.add.group();
         this.player.setBounce(0.2);
         this.player.accio="quiet";
         this.player.velocitat=120;
@@ -33,10 +36,14 @@ class GameScene extends Phaser.Scene {
         this.ganivet=ganivet;
         var pistola = {
             nom: "pistola",
+            pos_relativa: new Phaser.Math.Vector2(128,76), //punta arma respecte el cos
             bales: 1,
             municio: 0,
             cadencia: 400,
             min_cadencia:150,
+            vel_bala: 300,
+            dispersio: 4,
+            rang: 600,
             velocitat_recarrega: 2500,
             velocitat_recarrega_min: 800
         };
@@ -135,7 +142,12 @@ class GameScene extends Phaser.Scene {
                 } 
                 else{
                     this.player.angle=angle;
-                    this.atac_distancia(direccio);
+                    var pos_pistola=this.player.arma.pos_relativa.clone();
+                    pos_pistola.rotate((this.player.angle/180)*Math.PI);
+                    pos_pistola=pos_pistola.add(this.player.body.position);
+                    posicio= new Phaser.Math.Vector2(posx,posy);
+                    direccio=posicio.subtract(pos_pistola);
+                    this.atac_distancia(direccio,pos_pistola);
                 }
             }
         }
@@ -178,13 +190,24 @@ class GameScene extends Phaser.Scene {
         
     }
 
-    atac_distancia(dir){
+    afegir_bala(pos_inicial,dir,vel,rang,tipus){
+        var bala=this.bales_aliades.create(pos_inicial.x,pos_inicial.y,'bala_aliada_pistola');
+    }
+
+    atac_distancia(dir,pos){
         if (this.player.arma.nom=="pistola"){
             this.player.anims.play('atac_pistola');
-            var timedEvent = new Phaser.Time.TimerEvent({ delay: this.player.arma.min_cadencia, callback: this.cooldown_animacio_reset, callbackScope: this});
+            var timedEvent = new Phaser.Time.TimerEvent({ delay: this.player.arma.cadencia, callback: this.cooldown_animacio_reset, callbackScope: this});
             var timedEvent2 = new Phaser.Time.TimerEvent({ delay: this.player.arma.cadencia, callback: this.cooldown_disparar_reset, callbackScope: this});
             this.time.addEvent(timedEvent);
             this.time.addEvent(timedEvent2);
+            var angle=Phaser.Math.RND.frac()*this.player.arma.dispersio;
+            var negatiu=Phaser.Math.RND.between(0,1);
+            var direccio_final=dir.clone();
+            if(negatiu==0)direccio_final.rotate((-angle/180)*Math.PI);
+            else direccio_final.rotate((angle/180)*Math.PI);
+            direccio_final.normalize();
+            this.afegir_bala(pos,direccio_final,this.player.arma.vel_bala,this.player.arma.rang,"aliada");
         }
     }
     
