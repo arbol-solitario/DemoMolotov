@@ -3,6 +3,8 @@ class GameScene extends Phaser.Scene {
         super('GameScene');
         this.player=null;
         this.cursors=null;
+        this.pistola=null; //per guardar estadistiques
+        this.ganivet=null; //per guardar estadístiques
     }
 
     preload (){	
@@ -11,22 +13,32 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('ma_atac','../../resources/sense_arma/atacar_ma.png',{frameWidth: 329, frameHeight: 300});
         this.load.spritesheet('pistola_caminar','../../resources/pistola/caminar_pistola.png',{frameWidth: 258, frameHeight: 220});
         this.load.spritesheet('pistola_quiet','../../resources/pistola/quiet_pistola.png',{frameWidth: 253, frameHeight: 216});
+        this.load.spritesheet('pistola_atac','../../resources/pistola/atacar_pistola.png',{frameWidth: 255, frameHeight: 215});
+        this.load.spritesheet('pistola_cop','../../resources/pistola/golpejar_pistola.png',{frameWidth: 291, frameHeight: 256});
 
 	}
     create (){	
-        this.player = this.physics.add.sprite(400,300,'ma_caminar').setScale(0.25).refreshBody();
+        this.player = this.physics.add.sprite(400,300,'ma_caminar').setScale(0.5).refreshBody();
         this.player.setBounce(0.2);
         this.player.accio="quiet";
         this.player.velocitat=120;
         this.player.cooldown_disparar=false;
         this.player.cooldown_animacio=false;
         var ganivet = {
-            nom: "ganivet"
+            nom: "ganivet",
+            cadencia: 800,
+            min_cadencia:400
         };
+        this.ganivet=ganivet;
         var pistola = {
-            nom: "pistola"
+            nom: "pistola",
+            bales: 0,
+            municio: 0,
+            cadencia: 400,
+            min_cadencia:150
         };
-        this.player.arma=ganivet;
+        this.pistola=pistola;
+        this.player.arma=this.pistola;
 
         
 
@@ -47,7 +59,7 @@ class GameScene extends Phaser.Scene {
         this.anims.create ({
             key: 'atac_ma',
             frames: this.anims.generateFrameNumbers('ma_atac', { start: 0, end: 14 }),
-            frameRate: 20,
+            frameRate: 30,
             repeat: 0
         });
         this.anims.create ({
@@ -61,6 +73,18 @@ class GameScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('pistola_quiet', { start: 0, end: 19 }),
             frameRate: 30,
             repeat: -1
+        });
+        this.anims.create ({
+            key: 'atac_pistola',
+            frames: this.anims.generateFrameNumbers('pistola_atac', { start: 0, end: 2 }),
+            frameRate: 20,
+            repeat: 0
+        });
+        this.anims.create ({
+            key: 'cop_pistola',
+            frames: this.anims.generateFrameNumbers('pistola_cop', { start: 0, end: 13 }),
+            frameRate: 30,
+            repeat: 0
         });
         this.player.anims.play('quiet_ma');
 
@@ -96,20 +120,51 @@ class GameScene extends Phaser.Scene {
                 this.atac_cos(direccio);
             } 
             else{
-                this.atac_distancia(direccio);
+                if (this.player.arma.bales==0) this.recarregar();
+                else{
+                    this.atac_distancia(direccio);
+                }
             }
         }
+    }
+
+    recarregar(){
+
+    }
+
+    cooldown_animacio_reset(){
+        this.player.cooldown_animacio=false;
+    }
+    cooldown_disparar_reset(){
+        this.player.cooldown_disparar=false;
     }
 
     atac_cos(dir){
         if (this.player.arma.nom=="ganivet"){
             this.player.anims.play('atac_ma');
+            var timedEvent = new Phaser.Time.TimerEvent({ delay: this.player.arma.min_cadencia, callback: this.cooldown_animacio_reset, callbackScope: this});
+            var timedEvent2 = new Phaser.Time.TimerEvent({ delay: this.player.arma.cadencia, callback: this.cooldown_disparar_reset, callbackScope: this});
+            this.time.addEvent(timedEvent);
+            this.time.addEvent(timedEvent2);
+        }
+        if(this.player.arma.nom=="pistola"){
+            this.player.anims.play('cop_pistola');
+            var timedEvent = new Phaser.Time.TimerEvent({ delay: this.ganivet.min_cadencia, callback: this.cooldown_animacio_reset, callbackScope: this});
+            var timedEvent2 = new Phaser.Time.TimerEvent({ delay: this.ganivet.cadencia, callback: this.cooldown_disparar_reset, callbackScope: this});
+            this.time.addEvent(timedEvent);
+            this.time.addEvent(timedEvent2);
         }
         
     }
 
     atac_distancia(dir){
-        
+        if (this.player.arma.nom=="pistola"){
+            this.player.anims.play('atac_pistola');
+            var timedEvent = new Phaser.Time.TimerEvent({ delay: this.player.arma.min_cadencia, callback: this.cooldown_animacio_reset, callbackScope: this});
+            var timedEvent2 = new Phaser.Time.TimerEvent({ delay: this.player.arma.cadencia, callback: this.cooldown_disparar_reset, callbackScope: this});
+            this.time.addEvent(timedEvent);
+            this.time.addEvent(timedEvent2);
+        }
     }
     
 	
@@ -118,8 +173,8 @@ class GameScene extends Phaser.Scene {
             if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
                 if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
                 else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
+                this.player.accio="dreta";
             }
-            this.player.accio="dreta";
             if(this.cursors.S.isDown){
                 if(!this.player.cooldown_animacio) this.player.angle=45;
                 this.player.setVelocityX(Math.sqrt(Math.pow(this.player.velocitat,2)/2)); //perque el modul de la velocitat sigui el que ha de ser ja que sino aniria mes ràpid en diagonal
@@ -138,9 +193,10 @@ class GameScene extends Phaser.Scene {
         } 
         else if(this.cursors.A.isDown){
             if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
-                this.player.anims.play('caminar_ma');
+                if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
+                else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
+                this.player.accio="esquerra";
             }
-            this.player.accio="esquerra";
             if(this.cursors.S.isDown){
                 if(!this.player.cooldown_animacio) this.player.angle=135;
                 this.player.setVelocityX(-Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
@@ -159,26 +215,31 @@ class GameScene extends Phaser.Scene {
         } 
         else if(this.cursors.S.isDown){
             if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
-                this.player.anims.play('caminar_ma');
+                if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
+                else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
+                this.player.accio="avall";
             }
-            this.player.accio="avall";
             if(!this.player.cooldown_animacio) this.player.angle=90;
             this.player.setVelocityY(this.player.velocitat);
             this.player.setVelocityX(0);
         } 
         else if(this.cursors.W.isDown){
             if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
-                this.player.anims.play('caminar_ma');
+                if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
+                else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
+                this.player.accio="amunt";
             }
-            this.player.accio="amunt";
             if(!this.player.cooldown_animacio) this.player.angle=-90;
             this.player.setVelocityY(-this.player.velocitat);
             this.player.setVelocityX(0);
         } 
         else{//no es presiona cap tecla de moviment
             if (this.player.accio!="quiet"){
-                if(this.player.accio!="atacar" || this.player.cooldown_animacio==false)  this.player.anims.play('quiet_ma');
-                this.player.accio="quiet";
+                if(this.player.accio!="atacar" || this.player.cooldown_animacio==false){
+                    if(this.player.arma.nom=="ganivet") this.player.anims.play('quiet_ma');
+                else if (this.player.arma.nom=="pistola") this.player.anims.play('quiet_pistola');
+                    this.player.accio="quiet";
+                }  
                 this.player.setVelocityY(0);
                 this.player.setVelocityX(0);
             }
