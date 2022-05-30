@@ -163,7 +163,7 @@ class GameScene extends Phaser.Scene {
     recarregar(){
         if(this.player.arma.nom=="pistola"){
             this.player.anims.play('recarregar_pistola');
-            this.player.anims.msPerFrame  = this.player.arma.velocitat_recarrega/15;//canvio la velocitat de l'animacio segons la velocitat de recarrega
+            this.player.anims.msPerFrame  = this.player.arma.velocitat_recarrega/13;//canvio la velocitat de l'animacio segons la velocitat de recarrega
             var timedEvent = new Phaser.Time.TimerEvent({ delay: this.player.arma.velocitat_recarrega, callback: this.cooldown_animacio_reset, callbackScope: this});
             var timedEvent2 = new Phaser.Time.TimerEvent({ delay: this.player.arma.velocitat_recarrega, callback: this.cooldown_disparar_reset, callbackScope: this});
             this.time.addEvent(timedEvent);
@@ -240,91 +240,100 @@ class GameScene extends Phaser.Scene {
     
 	
 	update (){	
-
-        if (this.cursors.R.isDown && this.player.accio!="recarregar" && !this.player.cooldown_disparar){
-            if(this.player.arma.bales<this.player.arma.mida_cartutxo && this.player.arma.municio>0){
-                this.player.cooldown_disparar=true;
-                this.player.cooldown_animacio=true;
-                this.player.accio="recarregar";
-                this.recarregar();
-            }
+        console.log(this.player.accio);
+        console.log(this.player.cooldown_disparar);
+        console.log(this.player.cooldown_animacio);
+        if (this.cursors.space.isDown && this.player.accio!="dash" ){
+            this.player.accio="dash";
+            //this.player.setVelocity(750,0);
         }
-
-        if(this.cursors.D.isDown){
-            if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
-                if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
-                else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
-                this.player.accio="dreta";
+        else if(this.player.accio!="dash"){
+            if (this.cursors.R.isDown && this.player.accio!="recarregar" && !this.player.cooldown_animacio){
+                if(this.player.arma.bales<this.player.arma.mida_cartutxo && this.player.arma.municio>0){
+                    this.player.cooldown_disparar=true;
+                    this.player.cooldown_animacio=true;
+                    this.player.accio="recarregar";
+                    this.recarregar();
+                }
             }
-            if(this.cursors.S.isDown){
-                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=45;
-                this.player.setVelocityX(Math.sqrt(Math.pow(this.player.velocitat,2)/2)); //perque el modul de la velocitat sigui el que ha de ser ja que sino aniria mes ràpid en diagonal
-                this.player.setVelocityY(Math.sqrt(Math.pow(this.player.velocitat,2)/2));
-            }
-            else if(this.cursors.W.isDown){
-                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=-45;
-                this.player.setVelocityX(Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
-                this.player.setVelocityY(-Math.sqrt(Math.pow(this.player.velocitat,2)/2));
-            }
-            else{
-                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=0;
-                this.player.setVelocityX(this.player.velocitat);
-                this.player.setVelocityY(0);
-            }
-        } 
-        else if(this.cursors.A.isDown){
-            if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
-                if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
-                else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
-                this.player.accio="esquerra";
-            }
-            if(this.cursors.S.isDown){
-                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=135;
-                this.player.setVelocityX(-Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
-                this.player.setVelocityY(Math.sqrt(Math.pow(this.player.velocitat,2)/2));
-            }
-            else if(this.cursors.W.isDown){
-                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=225;
-                this.player.setVelocityX(-Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
-                this.player.setVelocityY(-Math.sqrt(Math.pow(this.player.velocitat,2)/2));
-            }
-            else{
-                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=180;
-                this.player.setVelocityX(-this.player.velocitat);
-                this.player.setVelocityY(0);
-            }
-        } 
-        else if(this.cursors.S.isDown){
-            if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
-                if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
-                else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
-                this.player.accio="avall";
-            }
-            if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=90;
-            this.player.setVelocityY(this.player.velocitat);
-            this.player.setVelocityX(0);
-        } 
-        else if(this.cursors.W.isDown){
-            if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
-                if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
-                else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
-                this.player.accio="amunt";
-            }
-            if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=-90;
-            this.player.setVelocityY(-this.player.velocitat);
-            this.player.setVelocityX(0);
-        } 
-        else{//no es presiona cap tecla de moviment
-            if (this.player.accio!="quiet"){
-                if(this.player.accio!="atacar" || this.player.cooldown_animacio==false){
-                    if(this.player.arma.nom=="ganivet") this.player.anims.play('quiet_ma');
-                else if (this.player.arma.nom=="pistola") this.player.anims.play('quiet_pistola');
-                    this.player.accio="quiet";
-                }  
-                this.player.setVelocityY(0);
+    
+            if(this.cursors.D.isDown){
+                if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
+                    if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
+                    else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
+                    this.player.accio="dreta";
+                }
+                if(this.cursors.S.isDown){
+                    if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=45;
+                    this.player.setVelocityX(Math.sqrt(Math.pow(this.player.velocitat,2)/2)); //perque el modul de la velocitat sigui el que ha de ser ja que sino aniria mes ràpid en diagonal
+                    this.player.setVelocityY(Math.sqrt(Math.pow(this.player.velocitat,2)/2));
+                }
+                else if(this.cursors.W.isDown){
+                    if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=-45;
+                    this.player.setVelocityX(Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
+                    this.player.setVelocityY(-Math.sqrt(Math.pow(this.player.velocitat,2)/2));
+                }
+                else{
+                    if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=0;
+                    this.player.setVelocityX(this.player.velocitat);
+                    this.player.setVelocityY(0);
+                }
+            } 
+            else if(this.cursors.A.isDown){
+                if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
+                    if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
+                    else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
+                    this.player.accio="esquerra";
+                }
+                if(this.cursors.S.isDown){
+                    if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=135;
+                    this.player.setVelocityX(-Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
+                    this.player.setVelocityY(Math.sqrt(Math.pow(this.player.velocitat,2)/2));
+                }
+                else if(this.cursors.W.isDown){
+                    if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=225;
+                    this.player.setVelocityX(-Math.sqrt(Math.pow(this.player.velocitat,2)/2)); 
+                    this.player.setVelocityY(-Math.sqrt(Math.pow(this.player.velocitat,2)/2));
+                }
+                else{
+                    if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=180;
+                    this.player.setVelocityX(-this.player.velocitat);
+                    this.player.setVelocityY(0);
+                }
+            } 
+            else if(this.cursors.S.isDown){
+                if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
+                    if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
+                    else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
+                    this.player.accio="avall";
+                }
+                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=90;
+                this.player.setVelocityY(this.player.velocitat);
                 this.player.setVelocityX(0);
+            } 
+            else if(this.cursors.W.isDown){
+                if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
+                    if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
+                    else if (this.player.arma.nom=="pistola") this.player.anims.play('caminar_pistola');
+                    this.player.accio="amunt";
+                }
+                if(!this.player.cooldown_animacio || (this.player.cooldown_animacio && this.player.accio=="recarregar")) this.player.angle=-90;
+                this.player.setVelocityY(-this.player.velocitat);
+                this.player.setVelocityX(0);
+            } 
+            else{//no es presiona cap tecla de moviment
+                if (this.player.accio!="quiet"){
+                    if((this.player.accio!="atacar" || this.player.cooldown_animacio==false) && (this.player.accio!="recarregar" || this.player.cooldown_animacio==false)){
+                        if(this.player.arma.nom=="ganivet") this.player.anims.play('quiet_ma');
+                        else if (this.player.arma.nom=="pistola") this.player.anims.play('quiet_pistola');
+                        this.player.accio="quiet";
+                    }  
+                    this.player.setVelocityY(0);
+                    this.player.setVelocityX(0);
+                }
             }
         }
+        
 
 
 
