@@ -58,7 +58,7 @@ class GameScene extends Phaser.Scene {
             cooldown: false,
             direccio: new Phaser.Math.Vector2(),
             temps_cooldown: 800,
-            upgradeat: true,
+            upgradeat: false,
             upgrade_temps_dasheant: 1000,
             upgrade_començat: false,
             upgrade_acabar: false
