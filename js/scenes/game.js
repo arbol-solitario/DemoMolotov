@@ -173,7 +173,7 @@ class GameScene extends Phaser.Scene {
     recarregar(){
         if(this.player.arma.nom=="pistola"){
             this.player.anims.play('recarregar_pistola');
-            this.player.anims.msPerFrame  = this.player.arma.velocitat_recarrega/13;//canvio la velocitat de l'animacio segons la velocitat de recarrega
+            this.player.anims.msPerFrame  = this.player.arma.velocitat_recarrega/12;//canvio la velocitat de l'animacio segons la velocitat de recarrega
             var timedEvent = new Phaser.Time.TimerEvent({ delay: this.player.arma.velocitat_recarrega, callback: this.cooldown_animacio_reset, callbackScope: this});
             var timedEvent2 = new Phaser.Time.TimerEvent({ delay: this.player.arma.velocitat_recarrega, callback: this.cooldown_disparar_reset, callbackScope: this});
             this.time.addEvent(timedEvent);
