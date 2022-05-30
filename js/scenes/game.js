@@ -49,10 +49,20 @@ class GameScene extends Phaser.Scene {
         //atributs player
         this.player.setBounce(0.2);
         this.player.accio="quiet";
+        this.player.estat="mortal";
         this.player.velocitat=150;
         this.player.cooldown_disparar=false;
         this.player.cooldown_animacio=false;
         this.player.arma=this.pistola;
+        this.player.dash={
+            cooldown: false,
+            direccio: new Phaser.Math.Vector2(),
+            temps_cooldown: 800,
+            upgradeat: true,
+            upgrade_temps_dasheant: 1000,
+            upgrade_començat: false,
+            upgrade_acabar: false
+        };
 
         
 
@@ -126,7 +136,7 @@ class GameScene extends Phaser.Scene {
 	}
     
     disparar(posx,posy){
-        if(!this.player.cooldown_disparar){
+        if(!this.player.cooldown_disparar && this.player.accio!="dash"){
             this.player.cooldown_disparar=true;
             this.player.cooldown_animacio=true;
             this.player.accio="atacar";
@@ -238,15 +248,104 @@ class GameScene extends Phaser.Scene {
         }
     }
     
-	
-	update (){	
-        console.log(this.player.accio);
-        console.log(this.player.cooldown_disparar);
-        console.log(this.player.cooldown_animacio);
-        if (this.cursors.space.isDown && this.player.accio!="dash" ){
-            this.player.accio="dash";
-            //this.player.setVelocity(750,0);
+    dash_cooldown(){
+        this.player.dash.cooldown=false;
+    }
+
+    dash_acabar_upgrade(){
+        if(this.player.dash.upgrade_començat){
+            this.player.dash.upgrade_acabar=true;
         }
+    }
+
+	dash_acabar(){
+        this.player.setAcceleration(0,0);
+        this.player.setVelocity(0,0);
+        this.player.clearTint();
+        this.player.accio="quiet";
+        this.player.estat="mortal";
+        var timedEvent = new Phaser.Time.TimerEvent({ delay: this.player.dash.temps_cooldown, callback: this.dash_cooldown, callbackScope: this});
+        this.time.addEvent(timedEvent);
+    }
+
+    dash_etapa2(){
+        if(!this.player.dash.upgradeat){
+            this.player.setAcceleration(-this.player.dash.direccio.x*2,-this.player.dash.direccio.y*2);
+            var timedEvent = new Phaser.Time.TimerEvent({ delay: 300, callback: this.dash_acabar, callbackScope: this});
+            this.time.addEvent(timedEvent);
+        }
+        else{
+            if(this.cursors.space.isUp || this.player.dash.upgrade_acabar){
+                console.log(this.player.dash.upgrade_acabar);
+                this.player.dash.cooldown=true;
+                this.player.setAcceleration(-this.player.dash.direccio.x*2,-this.player.dash.direccio.y*2);
+                var timedEvent = new Phaser.Time.TimerEvent({ delay: 300, callback: this.dash_acabar, callbackScope: this});
+                this.time.addEvent(timedEvent);
+                this.player.dash.upgrade_començat=false;
+                this.player.dash.upgrade_acabar=false;
+            }
+            else{
+                this.player.accio="quiet";
+                this.player.estat="mortal";
+            }
+        }
+        
+    }
+
+	update (){	
+
+
+        if (this.cursors.space.isDown && this.player.accio!="dash" && !this.player.dash.cooldown){
+            this.player.accio="dash";
+            this.player.estat="inmortal";
+            if(!this.player.dash.upgradeat){
+                this.player.setTint(0x3b3a38,0x3b3a38,0x8a8988,0x8a8988);
+                this.player.dash.cooldown=true; //si no està upgradeat, vull que només fagi dash un cop
+            } 
+            else{
+                if(!this.player.dash.upgrade_començat){
+                    this.player.setTint(0x3b3a38,0x3b3a38,0x8a8988,0x8a8988);
+                    this.player.dash.upgrade_començat=true;
+                    let timedEvent3 = new Phaser.Time.TimerEvent({ delay: this.player.dash.upgrade_temps_dasheant, callback: this.dash_acabar_upgrade, callbackScope: this});
+                    this.time.addEvent(timedEvent3);
+                }
+            }
+            if(this.cursors.D.isDown){
+                if(this.cursors.S.isDown){
+                    this.player.dash.direccio= new Phaser.Math.Vector2(Math.sqrt(Math.pow(this.player.velocitat*4,2)/2),Math.sqrt(Math.pow(this.player.velocitat*4,2)/2));
+                }
+                else if(this.cursors.W.isDown){
+                    this.player.dash.direccio= new Phaser.Math.Vector2(Math.sqrt(Math.pow(this.player.velocitat*4,2)/2),-Math.sqrt(Math.pow(this.player.velocitat*4,2)/2));
+                }
+                else{
+                    this.player.dash.direccio= new Phaser.Math.Vector2(this.player.velocitat*4,0);
+                }
+            }
+            else if(this.cursors.A.isDown){
+                if(this.cursors.S.isDown){
+                    this.player.dash.direccio= new Phaser.Math.Vector2(-Math.sqrt(Math.pow(this.player.velocitat*4,2)/2),Math.sqrt(Math.pow(this.player.velocitat*4,2)/2));
+                }
+                else if(this.cursors.W.isDown){
+                    this.player.dash.direccio= new Phaser.Math.Vector2(-Math.sqrt(Math.pow(this.player.velocitat*4,2)/2),-Math.sqrt(Math.pow(this.player.velocitat*4,2)/2));
+                }
+                else{
+                    this.player.dash.direccio= new Phaser.Math.Vector2(-this.player.velocitat*4,0);
+                }
+            }
+            else if(this.cursors.S.isDown){
+                this.player.dash.direccio= new Phaser.Math.Vector2(0,this.player.velocitat*4);
+            }
+            else{
+                this.player.dash.direccio= new Phaser.Math.Vector2(0,-this.player.velocitat*4);
+            }
+            this.player.setVelocity(this.player.dash.direccio.x,this.player.dash.direccio.y);
+            var timedEvent = new Phaser.Time.TimerEvent({ delay: 75, callback: this.dash_etapa2, callbackScope: this});
+            this.time.addEvent(timedEvent);
+        }
+
+
+
+
         else if(this.player.accio!="dash"){
             if (this.cursors.R.isDown && this.player.accio!="recarregar" && !this.player.cooldown_animacio){
                 if(this.player.arma.bales<this.player.arma.mida_cartutxo && this.player.arma.municio>0){
