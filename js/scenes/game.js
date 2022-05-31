@@ -262,7 +262,8 @@ class GameScene extends Phaser.Scene {
         this.player.setAcceleration(0,0);
         this.player.setVelocity(0,0);
         this.player.clearTint();
-        this.player.accio="quiet";
+        if(this.player.cooldown_animacio) this.player.accio="recarregar";
+        else this.player.accio="quiet";
         this.player.estat="mortal";
         var timedEvent = new Phaser.Time.TimerEvent({ delay: this.player.dash.temps_cooldown, callback: this.dash_cooldown, callbackScope: this});
         this.time.addEvent(timedEvent);
@@ -294,7 +295,7 @@ class GameScene extends Phaser.Scene {
 
 	update (){	
 
-
+        //dash
         if (this.cursors.space.isDown && this.player.accio!="dash" && !this.player.dash.cooldown){
             this.player.accio="dash";
             this.player.estat="inmortal";
@@ -345,8 +346,9 @@ class GameScene extends Phaser.Scene {
 
 
 
-
+        
         else if(this.player.accio!="dash"){
+            //recarrega
             if (this.cursors.R.isDown && this.player.accio!="recarregar" && !this.player.cooldown_animacio){
                 if(this.player.arma.bales<this.player.arma.mida_cartutxo && this.player.arma.municio>0){
                     this.player.cooldown_disparar=true;
@@ -355,7 +357,10 @@ class GameScene extends Phaser.Scene {
                     this.recarregar();
                 }
             }
-    
+            
+
+
+            //moures
             if(this.cursors.D.isDown){
                 if(this.player.accio=="quiet" || (this.player.accio=="atacar" && this.player.cooldown_animacio==false)){
                     if(this.player.arma.nom=="ganivet") this.player.anims.play('caminar_ma');
