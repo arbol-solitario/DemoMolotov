@@ -45,6 +45,7 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('pistola_recarregar','../../resources/pistola/recarregar_pistola.png',{frameWidth: 260, frameHeight: 230});
 
         this.load.image('carretera1','../../resources/mapa/carretera1.png');
+        this.load.image('carretera2','../../resources/mapa/carretera2.png');
         this.load.image('interseccio','../../resources/mapa/carretera_buida.png');
 
         this.load.image('edifici1','../../resources/mapa/edifici1.png');
@@ -58,24 +59,53 @@ class GameScene extends Phaser.Scene {
         this.add.image(600,0,"carretera1").setTint(0x888e94);
         this.add.image(600, -1680,"carretera1").setTint(0x888e94);
 
-        this.add.image(600,-840,"interseccio").setTint(0x888e94);
-
+        this.add.image(-240,-840,"carretera2").setTint(0x888e94);
         this.add.image(1200,0,"carretera1").setTint(0x888e94);
+        this.add.image(-1200,0,"carretera1").setTint(0x888e94);
+        this.add.image(-1200,1280,"carretera1").setTint(0x888e94);
         this.add.image(1200,-1680,"carretera1").setTint(0x888e94);
+        this.add.image(-400,2120,"carretera2").setTint(0x888e94);
+        this.add.image(880,2120,"carretera2").setTint(0x888e94);
+        this.add.image(1840,2080,"carretera1").setTint(0x888e94);
+
+        this.add.image(600,-840,"interseccio").setTint(0x888e94);
+        this.add.image(1200,-840,"interseccio").setTint(0x888e94);
+        this.add.image(-1200,-840,"interseccio").setTint(0x888e94);
+        this.add.image(-1000,-840,"interseccio").setTint(0x888e94);
+        this.add.image(-1200,2120,"interseccio").setTint(0x888e94);
+        this.add.image(1720,2120,"interseccio").setTint(0x888e94);
+        this.add.image(1840,2120,"interseccio").setTint(0x888e94);
+        this.add.image(1840,2880,"interseccio").setTint(0x888e94);
+
+
 
 
 
         this.edificis = this.physics.add.staticGroup();
         this.edificis.create(0,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(0,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(0,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1220,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(2440,1620,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(2440,2230,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(2440,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(2440,3450,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1830,3450,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1220,3450,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1220,2840,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(610,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(0,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-610,2840,"edifici2").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(0,-210,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(0,-1420,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(0,-1480,"edifici1").setScale(this.escala_personatge*2).refreshBody();
 
 
         this.edificis.create(610,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(1220,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(1830,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(1830,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+
+        this.edificis.create(-610,-210,"edifici1").setScale(this.escala_personatge*2).refreshBody();
 
 
         this.edificis.children.iterate(child => //per ajustar les colisions
