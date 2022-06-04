@@ -9,14 +9,17 @@ class GameScene extends Phaser.Scene {
         this.edificis=null;
         this.conos=null;
         this.bales_aliades=null;
+        this.cotxes=null;
+        this.ncotxes=5;
+        this.cotxes_buits=0;
         this.pistola={
             nom: "pistola",
             pos_relativa: new Phaser.Math.Vector2(128,76).scale(this.escala_personatge), //punta arma respecte al centre del cos
             centre_cos: new Phaser.Math.Vector2(128,108).scale(this.escala_personatge),
             bales: 1,
             municio: 10,
-            mida_cartutxo: 8,
-            cadencia: 600,
+            mida_cartutxo: 16,
+            cadencia: 500,
             min_cadencia:150,
             vel_bala: 900,
             dispersio: 7,
@@ -53,144 +56,165 @@ class GameScene extends Phaser.Scene {
         this.load.image('edifici2','../../resources/mapa/edifici2.png');
         this.load.image('cono','../../resources/mapa/cono.png');
 
+        this.load.image('cotxe1_esquerra','../../resources/mapa/cotxe1_esquerra.png');
+        this.load.image('cotxe1_amunt','../../resources/mapa/cotxe1_amunt.png');
+        this.load.image('cotxe2_esquerra','../../resources/mapa/cotxe2_esquerra.png');
+        this.load.image('cotxe2_avall','../../resources/mapa/cotxe2_avall.png');
+
 	}
     create (){	
-        this.add.image(0,0,"vorera").setTint(0x636869);
-
-        this.add.image(600,0,"carretera1").setTint(0x888e94);
-        this.add.image(600, -1680,"carretera1").setTint(0x888e94);
-
-        this.add.image(-240,-840,"carretera2").setTint(0x888e94);
-        this.add.image(1200,0,"carretera1").setTint(0x888e94);
-        this.add.image(-1200,0,"carretera1").setTint(0x888e94);
-        this.add.image(-1200,1280,"carretera1").setTint(0x888e94);
-        this.add.image(1200,-1680,"carretera1").setTint(0x888e94);
-        this.add.image(1200,-2940,"carretera1").setTint(0x888e94);
-        this.add.image(-1200,-1680,"carretera1").setTint(0x888e94);
-        this.add.image(-1200,-3480,"carretera1").setTint(0x888e94);
-        this.add.image(1200,-4200,"carretera1").setTint(0x888e94);
-        this.add.image(-400,2180,"carretera2").setTint(0x888e94);
-        this.add.image(880,2180,"carretera2").setTint(0x888e94);
-        this.add.image(1840,2140,"carretera1").setTint(0x888e94);
-        this.add.image(600,-2940,"carretera1").setTint(0x888e94);
-        this.add.image(600,-4200,"carretera1").setTint(0x888e94);
-        this.add.image(-2000,-2640,"carretera2").setTint(0x888e94);
-        this.add.image(2040,-4632,"carretera2").setTint(0x888e94);
-        this.add.image(2940,-4200,"carretera1").setTint(0x888e94);
-        this.add.image(2040,-3400,"carretera2").setTint(0x888e94);
-        
-
-        this.add.image(600,-840,"interseccio").setTint(0x888e94);
-        this.add.image(1200,-840,"interseccio").setTint(0x888e94);
-        this.add.image(-1200,-840,"interseccio").setTint(0x888e94);
-        this.add.image(-1000,-840,"interseccio").setTint(0x888e94);
-        this.add.image(-1200,2180,"interseccio").setTint(0x888e94);
-        this.add.image(-1200,2120,"interseccio").setTint(0x888e94);
-        this.add.image(1720,2180,"interseccio").setTint(0x888e94);
-        this.add.image(1840,2180,"interseccio").setTint(0x888e94);
-        this.add.image(1840,2980,"interseccio").setTint(0x888e94);
-        this.add.image(-1200,-2640,"interseccio").setTint(0x888e94);
-        this.add.image(-1200,-2440,"interseccio").setTint(0x888e94);
-        this.add.image(1200,-4600,"interseccio").setTint(0x888e94);
-        this.add.image(2880,-4632,"interseccio").setTint(0x888e94);
-        this.add.image(2940,-3400,"interseccio").setTint(0x888e94);
-        this.add.image(2840,-3400,"interseccio").setTint(0x888e94);
-        this.add.image(1200,-3400,"interseccio").setTint(0x888e94);
+        {//mapa
+            this.add.image(-2100,-4700,"vorera").setTint(0x636869);
+            this.add.image(300,-4700,"vorera").setTint(0x636869);
+            this.add.image(2700,-4700,"vorera").setTint(0x636869);
+            this.add.image(-2100,-2300,"vorera").setTint(0x636869);
+            this.add.image(300,-2300,"vorera").setTint(0x636869);
+            this.add.image(2700,-2300,"vorera").setTint(0x636869);
+            this.add.image(-2100,100,"vorera").setTint(0x636869);
+            this.add.image(300,100,"vorera").setTint(0x636869);
+            this.add.image(2700,100,"vorera").setTint(0x636869);
+            this.add.image(-2100,2500,"vorera").setTint(0x636869);
+            this.add.image(300,2500,"vorera").setTint(0x636869);
+            this.add.image(2700,2500,"vorera").setTint(0x636869);
 
 
+            this.add.image(600,0,"carretera1").setTint(0x888e94);
+            this.add.image(600, -1680,"carretera1").setTint(0x888e94);
+            this.add.image(-240,-840,"carretera2").setTint(0x888e94);
+            this.add.image(1200,0,"carretera1").setTint(0x888e94);
+            this.add.image(-1200,0,"carretera1").setTint(0x888e94);
+            this.add.image(-1200,1280,"carretera1").setTint(0x888e94);
+            this.add.image(1200,-1680,"carretera1").setTint(0x888e94);
+            this.add.image(1200,-2940,"carretera1").setTint(0x888e94);
+            this.add.image(-1200,-1680,"carretera1").setTint(0x888e94);
+            this.add.image(-1200,-3480,"carretera1").setTint(0x888e94);
+            this.add.image(1200,-4200,"carretera1").setTint(0x888e94);
+            this.add.image(-400,2180,"carretera2").setTint(0x888e94);
+            this.add.image(880,2180,"carretera2").setTint(0x888e94);
+            this.add.image(1840,2140,"carretera1").setTint(0x888e94);
+            this.add.image(600,-2940,"carretera1").setTint(0x888e94);
+            this.add.image(600,-4200,"carretera1").setTint(0x888e94);
+            this.add.image(-2000,-2640,"carretera2").setTint(0x888e94);
+            this.add.image(2040,-4632,"carretera2").setTint(0x888e94);
+            this.add.image(2940,-4200,"carretera1").setTint(0x888e94);
+            this.add.image(2040,-3400,"carretera2").setTint(0x888e94);
+            
+
+            this.add.image(600,-840,"interseccio").setTint(0x888e94);
+            this.add.image(1200,-840,"interseccio").setTint(0x888e94);
+            this.add.image(-1200,-840,"interseccio").setTint(0x888e94);
+            this.add.image(-1000,-840,"interseccio").setTint(0x888e94);
+            this.add.image(-1200,2180,"interseccio").setTint(0x888e94);
+            this.add.image(-1200,2120,"interseccio").setTint(0x888e94);
+            this.add.image(1720,2180,"interseccio").setTint(0x888e94);
+            this.add.image(1840,2180,"interseccio").setTint(0x888e94);
+            this.add.image(1840,2980,"interseccio").setTint(0x888e94);
+            this.add.image(-1200,-2640,"interseccio").setTint(0x888e94);
+            this.add.image(-1200,-2440,"interseccio").setTint(0x888e94);
+            this.add.image(1200,-4600,"interseccio").setTint(0x888e94);
+            this.add.image(2880,-4632,"interseccio").setTint(0x888e94);
+            this.add.image(2940,-3400,"interseccio").setTint(0x888e94);
+            this.add.image(2840,-3400,"interseccio").setTint(0x888e94);
+            this.add.image(1200,-3400,"interseccio").setTint(0x888e94);
 
 
+            this.edificis = this.physics.add.staticGroup();
+            this.edificis.create(0,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(0,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(0,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1220,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1830,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(2440,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(2440,1620,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(2440,2230,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(2440,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(2440,3450,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1830,3450,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1220,3450,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1220,2840,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(610,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(0,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-610,2840,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1210,2840,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,2230,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,-210,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,-820,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,-1430,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-2430,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-3040,-2040,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-3040,-2650,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-3040,-3260,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-2430,-3260,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,-3260,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,-3870,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1820,-4480,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-1210,-4580,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-600,-4580,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-600,-3870,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-600,-3260,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-600,-2650,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-600,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-600,-1430,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-600,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-600,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-600,400,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(0,-210,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(10,-1430,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(10,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(10,-2650,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(10,-3260,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(10,-3870,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(10,-4580,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(10,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(620,-5190,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1230,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1840,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(2450,-5190,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(3060,-5190,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(3670,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(3670,-4580,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(3670,-3970,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(3670,-3360,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(3670,-2750,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(3060,-2750,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(2450,-2750,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1840,-2750,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(2380,-4020,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1770,-4020,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1840,-2140,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1840,-1530,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1840,-920,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1840,-310,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(610,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1220,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(1830,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.create(-610,-210,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+            this.edificis.children.iterate(child => child.setSize(570,570));//per ajustar les colisions
 
+            this.conos = this.physics.add.staticGroup();
+            this.conos.create(1680,20,"cono").setTint(0x888e94);
+            this.conos.create(1680,70,"cono").setTint(0x888e94);
+        }
 
-        this.edificis = this.physics.add.staticGroup();
-        this.edificis.create(0,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(0,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(0,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1220,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1830,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(2440,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(2440,1620,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(2440,2230,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(2440,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(2440,3450,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1830,3450,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1220,3450,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1220,2840,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(610,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(0,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-610,2840,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1210,2840,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,2230,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,-210,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,-820,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,-1430,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-2430,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-3040,-2040,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-3040,-2650,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-3040,-3260,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-2430,-3260,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,-3260,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,-3870,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1820,-4480,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-1210,-4580,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-600,-4580,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-600,-3870,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-600,-3260,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-600,-2650,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-600,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-600,-1430,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-600,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-600,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(-600,400,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(0,-210,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(10,-1430,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(10,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(10,-2650,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(10,-3260,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(10,-3870,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(10,-4580,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(10,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(620,-5190,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1230,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1840,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(2450,-5190,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(3060,-5190,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(3670,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(3670,-4580,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(3670,-3970,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(3670,-3360,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(3670,-2750,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(3060,-2750,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(2450,-2750,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1840,-2750,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(2380,-4020,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1770,-4020,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1840,-2140,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1840,-1530,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1840,-920,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1840,-310,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        
-
-        this.edificis.create(610,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1220,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1830,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-
-        this.edificis.create(-610,-210,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-
-
-        this.edificis.children.iterate(child => child.setSize(570,570));//per ajustar les colisions
-
-
-
-
-        this.conos = this.physics.add.staticGroup();
-        this.conos.create(1680,20,"cono").setTint(0x888e94);
-        this.conos.create(1680,70,"cono").setTint(0x888e94);
+        this.cotxes=this.physics.add.staticGroup();
+        //cotxes grans
+        this.cotxes.create(2300,-3300,"cotxe1_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        this.cotxes.create(-2300,-2560,"cotxe1_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        this.cotxes.create(480,-4600,"cotxe1_amunt").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        this.cotxes.create(1320,-2200,"cotxe1_amunt").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        //cotxes petits
+        this.cotxes.create(250,-960,"cotxe2_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        this.cotxes.create(-580,2060,"cotxe2_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        this.cotxes.create(700,-3400,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        this.cotxes.create(-1100,-980,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        this.cotxes.create(-1080,450,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        this.cotxes.create(-1080,-3900,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        this.cotxes.create(1950,1680,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
 
 
 
@@ -210,6 +234,11 @@ class GameScene extends Phaser.Scene {
             this.player.setAcceleration(0,0);
         });
 
+        this.physics.add.collider(this.player,this.cotxes, ()=>{
+            this.player.setAcceleration(0,0);
+            this.tocant_cotxe();
+        });
+
         this.bales_aliades = this.physics.add.group();
         this.physics.add.overlap(this.bales_aliades,this.edificis, (bala,edifici)=>{
             bala.destroy();
@@ -218,7 +247,7 @@ class GameScene extends Phaser.Scene {
         //atributs player
         this.player.accio="quiet";
         this.player.estat="mortal";
-        this.player.velocitat=1050; //recordar posarla a 250
+        this.player.velocitat=950; //350 inicial 
         this.player.cooldown_disparar=false;
         this.player.cooldown_animacio=false;
         this.player.arma=this.pistola;
@@ -294,6 +323,7 @@ class GameScene extends Phaser.Scene {
         this.cursors.S=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S,true,true);
         this.cursors.W=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W,true,true);
         this.cursors.R=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R,true,true);
+        this.cursors.E=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E,true,true);
 
         this.input.on('pointerdown', (pointer) => {
             var top_left_x=this.cameras.main.midPoint.x-(1200/2); //relatius al mon
@@ -307,6 +337,12 @@ class GameScene extends Phaser.Scene {
         }, this);
 	}
     
+    tocant_cotxe(){
+        if(this.cursors.E.isDown){
+            console.log("adssa");
+        }
+    }
+
     disparar(posx,posy){
         if(!this.player.cooldown_disparar && this.player.accio!="dash"){
             this.player.cooldown_disparar=true;
