@@ -53,7 +53,7 @@ class GameScene extends Phaser.Scene {
         this.player.velocitat=150;
         this.player.cooldown_disparar=false;
         this.player.cooldown_animacio=false;
-        this.player.arma=this.pistola;
+        this.player.arma=this.pistola.clone();
         this.player.dash={
             cooldown: false,
             direccio: new Phaser.Math.Vector2(),
