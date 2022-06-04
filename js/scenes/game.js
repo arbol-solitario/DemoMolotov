@@ -210,6 +210,7 @@ class GameScene extends Phaser.Scene {
         //cotxes petits
         this.cotxes.create(250,-960,"cotxe2_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
         this.cotxes.create(-580,2060,"cotxe2_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        this.cotxes.create(2180,-4750,"cotxe2_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
         this.cotxes.create(700,-3400,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
         this.cotxes.create(-1100,-980,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
         this.cotxes.create(-1080,450,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
