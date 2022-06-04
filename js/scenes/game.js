@@ -6,6 +6,7 @@ class GameScene extends Phaser.Scene {
         this.escala_personatge=0.3;
         this.player=null;
         this.cursors=null;
+        this.edificis=null;
         this.bales_aliades=null;
         this.pistola={
             nom: "pistola",
@@ -16,7 +17,7 @@ class GameScene extends Phaser.Scene {
             mida_cartutxo: 8,
             cadencia: 600,
             min_cadencia:150,
-            vel_bala: 600,
+            vel_bala: 900,
             dispersio: 7,
             rang: 600,
             velocitat_recarrega: 2500,
@@ -31,6 +32,8 @@ class GameScene extends Phaser.Scene {
     }
 
     preload (){	
+        this.load.image('vorera','../../resources/mapa/background.png');
+
         this.load.image('bala_aliada_pistola','../../resources/bales/bala_aliada_pistola.png');
         this.load.spritesheet('ma_caminar','../../resources/sense_arma/caminar_ma.png',{frameWidth: 279, frameHeight: 219});
         this.load.spritesheet('ma_quiet','../../resources/sense_arma/quiet_ma.png',{frameWidth: 289, frameHeight: 224});
@@ -41,19 +44,66 @@ class GameScene extends Phaser.Scene {
         this.load.spritesheet('pistola_cop','../../resources/pistola/golpejar_pistola.png',{frameWidth: 291, frameHeight: 256});
         this.load.spritesheet('pistola_recarregar','../../resources/pistola/recarregar_pistola.png',{frameWidth: 260, frameHeight: 230});
 
+        this.load.image('carretera1','../../resources/mapa/carretera1.png');
+        this.load.image('interseccio','../../resources/mapa/carretera_buida.png');
+
+        this.load.image('edifici1','../../resources/mapa/edifici1.png');
+        this.load.image('edifici2','../../resources/mapa/edifici2.png');
+        this.load.image('edifici2','../../resources/mapa/edifici2.png');
+
 	}
     create (){	
-        this.player = this.physics.add.sprite(400,300,'pistola_quiet').setScale(this.escala_personatge).refreshBody(); //Hauré de posar una imatge diferent perquè no afecti el braç a la hitbox per exemple
+        this.add.image(0,0,"vorera").setTint(0x636869);
+
+        this.add.image(600,0,"carretera1").setTint(0x888e94);
+        this.add.image(600, -1680,"carretera1").setTint(0x888e94);
+
+        this.add.image(600,-840,"interseccio").setTint(0x888e94);
+
+        this.add.image(1200,0,"carretera1").setTint(0x888e94);
+        this.add.image(1200,-1680,"carretera1").setTint(0x888e94);
+
+
+
+        this.edificis = this.physics.add.staticGroup();
+        this.edificis.create(0,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(0,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(0,-210,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(0,-1420,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+
+
+        this.edificis.create(610,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1220,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1830,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1830,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+
+
+        this.edificis.children.iterate(child => //per ajustar les colisions
+            child.setSize(570,570));
+
+        this.player = this.physics.add.sprite(600,400,'pistola_quiet').setScale(this.escala_personatge).refreshBody(); //Hauré de posar una imatge diferent perquè no afecti el braç a la hitbox per exemple
+        this.player.body.setSize(220,200);//canvio la mida per que les colisions siguin menys molestes a l'hora d'esquivar bales
+        this.player.onCollide=true;
+        this.player.setBounce(0);
+
+        this.cameras.main.startFollow(this.player);
+
+        this.physics.add.collider(this.player,this.edificis, ()=>{
+            this.player.setAcceleration(0,0);
+        });
+
         this.bales_aliades = this.physics.add.group();
+        this.physics.add.overlap(this.bales_aliades,this.edificis, (bala,edifici)=>{
+            bala.destroy();
+        })
 
         //atributs player
-        this.player.setBounce(0.2);
         this.player.accio="quiet";
         this.player.estat="mortal";
-        this.player.velocitat=150;
+        this.player.velocitat=950; //recordar posarla a 250
         this.player.cooldown_disparar=false;
         this.player.cooldown_animacio=false;
-        this.player.arma=this.pistola.clone();
+        this.player.arma=this.pistola;
         this.player.dash={
             cooldown: false,
             direccio: new Phaser.Math.Vector2(),
@@ -64,7 +114,7 @@ class GameScene extends Phaser.Scene {
             upgrade_acabar: false
         };
 
-        
+
 
 
         this.anims.create ({
@@ -95,7 +145,7 @@ class GameScene extends Phaser.Scene {
         this.anims.create ({
             key: 'quiet_pistola',
             frames: this.anims.generateFrameNumbers('pistola_quiet', { start: 0, end: 19 }),
-            frameRate: 30,
+            frameRate: 20,
             repeat: -1
         });
         this.anims.create ({
@@ -128,8 +178,11 @@ class GameScene extends Phaser.Scene {
         this.cursors.R=this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R,true,true);
 
         this.input.on('pointerdown', (pointer) => {
-
-            this.disparar(pointer.x,pointer.y);
+            var top_left_x=this.cameras.main.midPoint.x-(1200/2); //relatius al mon
+            var top_left_y=this.cameras.main.midPoint.y-(800/2);
+            var pos_rel_mon_x=pointer.x+top_left_x; 
+            var pos_rel_mon_y=pointer.y+top_left_y;
+            this.disparar(pos_rel_mon_x,pos_rel_mon_y);
     
     
         }, this);
@@ -223,7 +276,7 @@ class GameScene extends Phaser.Scene {
 
     afegir_bala(pos_inicial,dir,vel,rang,bando,tipus){
         var angle=dir.angle();
-        if (bando=="aliada")var bala=this.bales_aliades.create(pos_inicial.x,pos_inicial.y,'bala_aliada_pistola').setScale(this.escala_personatge*1.3).setRotation(angle).refreshBody();
+        if (bando=="aliada")var bala=this.bales_aliades.create(pos_inicial.x,pos_inicial.y,'bala_aliada_pistola').setScale(this.escala_personatge*1.9).setRotation(angle).refreshBody();
         bala.setVelocity(dir.x*vel,dir.y*vel);
         bala.tipus=tipus;
         bala.pos_inicial=pos_inicial;
@@ -271,7 +324,7 @@ class GameScene extends Phaser.Scene {
 
     dash_etapa2(){
         if(!this.player.dash.upgradeat){
-            this.player.setAcceleration(-this.player.dash.direccio.x*2,-this.player.dash.direccio.y*2);
+            if(this.player.body.velocity.length()!=0) this.player.setAcceleration(-this.player.dash.direccio.x*2,-this.player.dash.direccio.y*2);
             var timedEvent = new Phaser.Time.TimerEvent({ delay: 300, callback: this.dash_acabar, callbackScope: this});
             this.time.addEvent(timedEvent);
         }
@@ -279,7 +332,7 @@ class GameScene extends Phaser.Scene {
             if(this.cursors.space.isUp || this.player.dash.upgrade_acabar){
                 console.log(this.player.dash.upgrade_acabar);
                 this.player.dash.cooldown=true;
-                this.player.setAcceleration(-this.player.dash.direccio.x*2,-this.player.dash.direccio.y*2);
+                if(this.player.body.velocity.length()!=0) this.player.setAcceleration(-this.player.dash.direccio.x*2,-this.player.dash.direccio.y*2);
                 var timedEvent = new Phaser.Time.TimerEvent({ delay: 300, callback: this.dash_acabar, callbackScope: this});
                 this.time.addEvent(timedEvent);
                 this.player.dash.upgrade_començat=false;
@@ -295,6 +348,8 @@ class GameScene extends Phaser.Scene {
 
 	update (){	
 
+
+        //tractament inputs
         //dash
         if (this.cursors.space.isDown && this.player.accio!="dash" && !this.player.dash.cooldown){
             this.player.accio="dash";
