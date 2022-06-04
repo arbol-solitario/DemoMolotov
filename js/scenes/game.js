@@ -7,6 +7,7 @@ class GameScene extends Phaser.Scene {
         this.player=null;
         this.cursors=null;
         this.edificis=null;
+        this.conos=null;
         this.bales_aliades=null;
         this.pistola={
             nom: "pistola",
@@ -50,7 +51,7 @@ class GameScene extends Phaser.Scene {
 
         this.load.image('edifici1','../../resources/mapa/edifici1.png');
         this.load.image('edifici2','../../resources/mapa/edifici2.png');
-        this.load.image('edifici2','../../resources/mapa/edifici2.png');
+        this.load.image('cono','../../resources/mapa/cono.png');
 
 	}
     create (){	
@@ -64,18 +65,38 @@ class GameScene extends Phaser.Scene {
         this.add.image(-1200,0,"carretera1").setTint(0x888e94);
         this.add.image(-1200,1280,"carretera1").setTint(0x888e94);
         this.add.image(1200,-1680,"carretera1").setTint(0x888e94);
-        this.add.image(-400,2120,"carretera2").setTint(0x888e94);
-        this.add.image(880,2120,"carretera2").setTint(0x888e94);
-        this.add.image(1840,2080,"carretera1").setTint(0x888e94);
+        this.add.image(1200,-2940,"carretera1").setTint(0x888e94);
+        this.add.image(-1200,-1680,"carretera1").setTint(0x888e94);
+        this.add.image(-1200,-3480,"carretera1").setTint(0x888e94);
+        this.add.image(1200,-4200,"carretera1").setTint(0x888e94);
+        this.add.image(-400,2180,"carretera2").setTint(0x888e94);
+        this.add.image(880,2180,"carretera2").setTint(0x888e94);
+        this.add.image(1840,2140,"carretera1").setTint(0x888e94);
+        this.add.image(600,-2940,"carretera1").setTint(0x888e94);
+        this.add.image(600,-4200,"carretera1").setTint(0x888e94);
+        this.add.image(-2000,-2640,"carretera2").setTint(0x888e94);
+        this.add.image(2040,-4632,"carretera2").setTint(0x888e94);
+        this.add.image(2940,-4200,"carretera1").setTint(0x888e94);
+        this.add.image(2040,-3400,"carretera2").setTint(0x888e94);
+        
 
         this.add.image(600,-840,"interseccio").setTint(0x888e94);
         this.add.image(1200,-840,"interseccio").setTint(0x888e94);
         this.add.image(-1200,-840,"interseccio").setTint(0x888e94);
         this.add.image(-1000,-840,"interseccio").setTint(0x888e94);
+        this.add.image(-1200,2180,"interseccio").setTint(0x888e94);
         this.add.image(-1200,2120,"interseccio").setTint(0x888e94);
-        this.add.image(1720,2120,"interseccio").setTint(0x888e94);
-        this.add.image(1840,2120,"interseccio").setTint(0x888e94);
-        this.add.image(1840,2880,"interseccio").setTint(0x888e94);
+        this.add.image(1720,2180,"interseccio").setTint(0x888e94);
+        this.add.image(1840,2180,"interseccio").setTint(0x888e94);
+        this.add.image(1840,2980,"interseccio").setTint(0x888e94);
+        this.add.image(-1200,-2640,"interseccio").setTint(0x888e94);
+        this.add.image(-1200,-2440,"interseccio").setTint(0x888e94);
+        this.add.image(1200,-4600,"interseccio").setTint(0x888e94);
+        this.add.image(2880,-4632,"interseccio").setTint(0x888e94);
+        this.add.image(2940,-3400,"interseccio").setTint(0x888e94);
+        this.add.image(2840,-3400,"interseccio").setTint(0x888e94);
+        this.add.image(1200,-3400,"interseccio").setTint(0x888e94);
+
 
 
 
@@ -86,6 +107,8 @@ class GameScene extends Phaser.Scene {
         this.edificis.create(0,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(0,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(1220,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1830,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(2440,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(2440,1620,"edifici2").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(2440,2230,"edifici2").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(2440,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
@@ -96,20 +119,81 @@ class GameScene extends Phaser.Scene {
         this.edificis.create(610,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(0,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(-610,2840,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1210,2840,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,2840,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,2230,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,-210,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,-820,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,-1430,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-2430,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-3040,-2040,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-3040,-2650,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-3040,-3260,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-2430,-3260,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,-3260,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,-3870,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1820,-4480,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-1210,-4580,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-600,-4580,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-600,-3870,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-600,-3260,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-600,-2650,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-600,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-600,-1430,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-600,1620,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-600,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(-600,400,"edifici2").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(0,-210,"edifici2").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(0,-1480,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-
+        this.edificis.create(10,-1430,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(10,-2040,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(10,-2650,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(10,-3260,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(10,-3870,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(10,-4580,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(10,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(620,-5190,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1230,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1840,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(2450,-5190,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(3060,-5190,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(3670,-5190,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(3670,-4580,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(3670,-3970,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(3670,-3360,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(3670,-2750,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(3060,-2750,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(2450,-2750,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1840,-2750,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(2380,-4020,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1770,-4020,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1840,-2140,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1840,-1530,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1840,-920,"edifici2").setScale(this.escala_personatge*2).refreshBody();
+        this.edificis.create(1840,-310,"edifici1").setScale(this.escala_personatge*2).refreshBody();
+        
 
         this.edificis.create(610,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(1220,1010,"edifici1").setScale(this.escala_personatge*2).refreshBody();
         this.edificis.create(1830,400,"edifici1").setScale(this.escala_personatge*2).refreshBody();
-        this.edificis.create(1830,1010,"edifici2").setScale(this.escala_personatge*2).refreshBody();
 
         this.edificis.create(-610,-210,"edifici1").setScale(this.escala_personatge*2).refreshBody();
 
 
-        this.edificis.children.iterate(child => //per ajustar les colisions
-            child.setSize(570,570));
+        this.edificis.children.iterate(child => child.setSize(570,570));//per ajustar les colisions
+
+
+
+
+        this.conos = this.physics.add.staticGroup();
+        this.conos.create(1680,20,"cono").setTint(0x888e94);
+        this.conos.create(1680,70,"cono").setTint(0x888e94);
+
+
+
 
         this.player = this.physics.add.sprite(600,400,'pistola_quiet').setScale(this.escala_personatge).refreshBody(); //Hauré de posar una imatge diferent perquè no afecti el braç a la hitbox per exemple
         this.player.body.setSize(220,200);//canvio la mida per que les colisions siguin menys molestes a l'hora d'esquivar bales
@@ -122,6 +206,10 @@ class GameScene extends Phaser.Scene {
             this.player.setAcceleration(0,0);
         });
 
+        this.physics.add.collider(this.player,this.conos, ()=>{
+            this.player.setAcceleration(0,0);
+        });
+
         this.bales_aliades = this.physics.add.group();
         this.physics.add.overlap(this.bales_aliades,this.edificis, (bala,edifici)=>{
             bala.destroy();
@@ -130,7 +218,7 @@ class GameScene extends Phaser.Scene {
         //atributs player
         this.player.accio="quiet";
         this.player.estat="mortal";
-        this.player.velocitat=950; //recordar posarla a 250
+        this.player.velocitat=1050; //recordar posarla a 250
         this.player.cooldown_disparar=false;
         this.player.cooldown_animacio=false;
         this.player.arma=this.pistola;
@@ -213,6 +301,7 @@ class GameScene extends Phaser.Scene {
             var pos_rel_mon_x=pointer.x+top_left_x; 
             var pos_rel_mon_y=pointer.y+top_left_y;
             this.disparar(pos_rel_mon_x,pos_rel_mon_y);
+            console.log(pos_rel_mon_x,pos_rel_mon_y);
     
     
         }, this);
