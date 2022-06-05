@@ -10,10 +10,11 @@ class GameScene extends Phaser.Scene {
         this.conos=null;
         this.bales_aliades=null;
         this.cotxes=null;
-        this.ncotxes=5;
+        this.ncotxes=12;
         this.cotxes_buits=0;
         this.colisio_cotxe=false;
         this.cotxe_actual=null;
+        this.cotxe_personal=null;
         this.pistola={
             nom: "pistola",
             pos_relativa: new Phaser.Math.Vector2(128,76).scale(this.escala_personatge), //punta arma respecte al centre del cos
@@ -62,6 +63,7 @@ class GameScene extends Phaser.Scene {
         this.load.image('cotxe1_amunt','../../resources/mapa/cotxe1_amunt.png');
         this.load.image('cotxe2_esquerra','../../resources/mapa/cotxe2_esquerra.png');
         this.load.image('cotxe2_avall','../../resources/mapa/cotxe2_avall.png');
+        this.load.image('cotxe3','../../resources/mapa/cotxe3.png');
 
 	}
     create (){	
@@ -235,6 +237,13 @@ class GameScene extends Phaser.Scene {
         this.omplir_cotxes();
 
 
+
+        this.cotxe_personal=this.physics.add.image(1830,3000,"cotxe3").setScale(this.escala_personatge*2).setImmovable().refreshBody().setTint(0x888e94); //no se si es lo correcte, pero no trobo com afegir un static body sense grup 
+        this.cotxe_personal.litres=0;
+        this.cotxe_personal.diposit=15;
+        this.cotxe_personal.text_afegit=false;
+
+
         this.player = this.physics.add.sprite(600,400,'pistola_quiet').setScale(this.escala_personatge).refreshBody(); //Hauré de posar una imatge diferent perquè no afecti el braç a la hitbox per exemple
         this.player.body.setSize(220,200);//canvio la mida per que les colisions siguin menys molestes a l'hora d'esquivar bales
         this.player.onCollide=true;
@@ -253,6 +262,11 @@ class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.player,this.cotxes, (jug,cotxe)=>{
             this.player.setAcceleration(0,0);
             this.tocant_cotxe(cotxe);
+        });
+
+        this.physics.add.collider(this.player, this.cotxe_personal, (jug,cotxe)=>{
+            this.player.setAcceleration(0,0);
+            this.tocant_cotxe_pers(cotxe);
         });
 
         this.bales_aliades = this.physics.add.group();
@@ -358,6 +372,45 @@ class GameScene extends Phaser.Scene {
         }, this);
 	}
     
+    tocant_cotxe_pers(cotxe){
+        this.cotxe_actual=cotxe;
+        this.colisio_cotxe=true;
+        if (!cotxe.text_afegit){
+            cotxe.text_afegit=true;
+            cotxe.text=this.add.text(cotxe.body.position.x+50,cotxe.body.position.y+10,cotxe.litres+" L/"+ cotxe.diposit + "L",{fontSize: '35px', fill: '#FFF'});
+        }
+        if(this.player.ampolla>0 && cotxe.diposit>cotxe.litres && this.player.accio!="recarregar" && this.player.accio!="dash"){
+            if(this.cursors.E.isDown){
+                this.player.omplint_benzina=true;
+                if(cotxe.text) {
+                    cotxe.text.destroy();
+                    cotxe.text_afegit=false;
+                }
+            }
+            else{
+                this.player.omplint_benzina=false;
+                this.player.temps_omplir=0;
+            } 
+            if (this.player.omplint_benzina){
+                this.player.temps_omplir+=1;
+                if (cotxe.text) cotxe.text.destroy();
+                cotxe.text=this.add.text(cotxe.body.position.x+50,cotxe.body.position.y+10,((this.player.temps_omplir_max-this.player.temps_omplir)/60).toFixed(2)+" s",{fontSize: '35px', fill: '#FFF'});
+                if(this.player.temps_omplir>=this.player.temps_omplir_max){
+                    this.player.omplint_benzina=false;
+                    this.player.temps_omplir=0;
+                    if((cotxe.diposit-cotxe.litres)>=this.player.ampolla){
+                        cotxe.litres+=this.player.ampolla;
+                        this.player.ampolla=0;
+                    }
+                    else{
+                        this.player.ampolla=cotxe.diposit-cotxe.litres;
+                        cotxe.litres+=cotxe.diposit;
+                    }
+                }
+            }
+        }
+    }
+
     omplir_cotxes(){
         this.cotxes.children.iterate((child) =>{
             var n=Phaser.Math.RND.integerInRange(1, child.diposit);
@@ -395,12 +448,14 @@ class GameScene extends Phaser.Scene {
                     if(cotxe.benzina>=(this.player.ampolla_max-this.player.ampolla)){
                         cotxe.benzina=cotxe.benzina-(this.player.ampolla_max-this.player.ampolla);
                         this.player.ampolla=this.player.ampolla_max;
-
+                        if(cotxe.benzina==0) this.cotxes_buits++;
                     }
                     else{
                         this.player.ampolla=this.player.ampolla+cotxe.benzina;
                         cotxe.benzina=0;
+                        this.cotxes_buits++;
                     }
+                    if(this.cotxes_buits==this.ncotxes) this.omplir_cotxes();
                 }
             }
         }
