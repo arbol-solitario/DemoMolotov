@@ -12,6 +12,8 @@ class GameScene extends Phaser.Scene {
         this.cotxes=null;
         this.ncotxes=5;
         this.cotxes_buits=0;
+        this.colisio_cotxe=false;
+        this.cotxe_actual=null;
         this.pistola={
             nom: "pistola",
             pos_relativa: new Phaser.Math.Vector2(128,76).scale(this.escala_personatge), //punta arma respecte al centre del cos
@@ -202,22 +204,35 @@ class GameScene extends Phaser.Scene {
         }
 
         this.cotxes=this.physics.add.staticGroup();
+        var cotxe;
         //cotxes grans
-        this.cotxes.create(2300,-3300,"cotxe1_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
-        this.cotxes.create(-2300,-2560,"cotxe1_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
-        this.cotxes.create(480,-4600,"cotxe1_amunt").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
-        this.cotxes.create(1320,-2200,"cotxe1_amunt").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe=this.cotxes.create(2300,-3300,"cotxe1_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=6.0;
+        cotxe=this.cotxes.create(-2300,-2560,"cotxe1_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=6.0;
+        cotxe=this.cotxes.create(480,-4600,"cotxe1_amunt").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=6.0;
+        cotxe=this.cotxes.create(1320,-2200,"cotxe1_amunt").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=6.0;
         //cotxes petits
-        this.cotxes.create(250,-960,"cotxe2_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
-        this.cotxes.create(-580,2060,"cotxe2_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
-        this.cotxes.create(2180,-4750,"cotxe2_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
-        this.cotxes.create(700,-3400,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
-        this.cotxes.create(-1100,-980,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
-        this.cotxes.create(-1080,450,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
-        this.cotxes.create(-1080,-3900,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
-        this.cotxes.create(1950,1680,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe=this.cotxes.create(250,-960,"cotxe2_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=2.0;
+        cotxe=this.cotxes.create(-580,2060,"cotxe2_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=2.0;
+        cotxe=this.cotxes.create(2180,-4750,"cotxe2_esquerra").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=2.0;
+        cotxe=this.cotxes.create(700,-3400,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=2.0;
+        cotxe=this.cotxes.create(-1100,-980,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=2.0;
+        cotxe=this.cotxes.create(-1080,450,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=2.0;
+        cotxe=this.cotxes.create(-1080,-3900,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=2.0;
+        cotxe=this.cotxes.create(1950,1680,"cotxe2_avall").setScale(this.escala_personatge*2).refreshBody().setTint(0x888e94);
+        cotxe.diposit=2.0;
 
-
+        this.omplir_cotxes();
 
 
         this.player = this.physics.add.sprite(600,400,'pistola_quiet').setScale(this.escala_personatge).refreshBody(); //Hauré de posar una imatge diferent perquè no afecti el braç a la hitbox per exemple
@@ -235,9 +250,9 @@ class GameScene extends Phaser.Scene {
             this.player.setAcceleration(0,0);
         });
 
-        this.physics.add.collider(this.player,this.cotxes, ()=>{
+        this.physics.add.collider(this.player,this.cotxes, (jug,cotxe)=>{
             this.player.setAcceleration(0,0);
-            this.tocant_cotxe();
+            this.tocant_cotxe(cotxe);
         });
 
         this.bales_aliades = this.physics.add.group();
@@ -248,6 +263,11 @@ class GameScene extends Phaser.Scene {
         //atributs player
         this.player.accio="quiet";
         this.player.estat="mortal";
+        this.player.omplint_benzina=false;
+        this.player.ampolla_max=0.5;
+        this.player.ampolla=0;
+        this.player.temps_omplir=0;
+        this.player.temps_omplir_max=350;
         this.player.velocitat=950; //350 inicial 
         this.player.cooldown_disparar=false;
         this.player.cooldown_animacio=false;
@@ -338,9 +358,51 @@ class GameScene extends Phaser.Scene {
         }, this);
 	}
     
-    tocant_cotxe(){
-        if(this.cursors.E.isDown){
-            console.log("adssa");
+    omplir_cotxes(){
+        this.cotxes.children.iterate((child) =>{
+            var n=Phaser.Math.RND.integerInRange(1, child.diposit);
+            child.benzina=n;
+            child.text_afegit=false;
+        });
+    }
+
+    tocant_cotxe(cotxe){
+        this.cotxe_actual=cotxe;
+        this.colisio_cotxe=true;
+        if (!cotxe.text_afegit){
+            cotxe.text_afegit=true;
+            cotxe.text=this.add.text(cotxe.body.position.x+50,cotxe.body.position.y+10,cotxe.benzina+" L",{fontSize: '35px', fill: '#FFF'});
+        }
+        if(cotxe.benzina>0 && this.player.ampolla<this.player.ampolla_max && this.player.accio!="recarregar" && this.player.accio!="dash"){
+            if(this.cursors.E.isDown){
+                this.player.omplint_benzina=true;
+                if(cotxe.text) {
+                    cotxe.text.destroy();
+                    cotxe.text_afegit=false;
+                }
+            }
+            else{
+                this.player.omplint_benzina=false;
+                this.player.temps_omplir=0;
+            } 
+            if (this.player.omplint_benzina){
+                this.player.temps_omplir+=1;
+                if (cotxe.text) cotxe.text.destroy();
+                cotxe.text=this.add.text(cotxe.body.position.x+50,cotxe.body.position.y+10,((this.player.temps_omplir_max-this.player.temps_omplir)/60).toFixed(2)+" s",{fontSize: '35px', fill: '#FFF'});
+                if(this.player.temps_omplir>=this.player.temps_omplir_max){
+                    this.player.omplint_benzina=false;
+                    this.player.temps_omplir=0;
+                    if(cotxe.benzina>=(this.player.ampolla_max-this.player.ampolla)){
+                        cotxe.benzina=cotxe.benzina-(this.player.ampolla_max-this.player.ampolla);
+                        this.player.ampolla=this.player.ampolla_max;
+
+                    }
+                    else{
+                        this.player.ampolla=this.player.ampolla+cotxe.benzina;
+                        cotxe.benzina=0;
+                    }
+                }
+            }
         }
     }
 
@@ -503,8 +565,16 @@ class GameScene extends Phaser.Scene {
     }
 
 	update (){	
-
-
+        if(!this.colisio_cotxe){
+            if(this.cotxe_actual) {
+                if (this.cotxe_actual.text){
+                    this.cotxe_actual.text.destroy();
+                    this.cotxe_actual.text_afegit=false;
+                }
+            }
+            if(this.player.omplint_benzina) this.player.omplint_benzina=false;
+        }
+        this.colisio_cotxe=false;
         //tractament inputs
         //dash
         if (this.cursors.space.isDown && this.player.accio!="dash" && !this.player.dash.cooldown){
@@ -558,7 +628,7 @@ class GameScene extends Phaser.Scene {
 
 
         
-        else if(this.player.accio!="dash"){
+        else if(this.player.accio!="dash" ){
             //recarrega
             if (this.cursors.R.isDown && this.player.accio!="recarregar" && !this.player.cooldown_animacio){
                 if(this.player.arma.bales<this.player.arma.mida_cartutxo && this.player.arma.municio>0){
@@ -648,6 +718,8 @@ class GameScene extends Phaser.Scene {
                 }
             }
         }
+    
+
         
 
 
