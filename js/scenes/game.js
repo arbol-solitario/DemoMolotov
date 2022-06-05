@@ -673,12 +673,6 @@ class GameScene extends Phaser.Scene {
         if (this.temps<=0){
             this.acabar_partida();
         }
-        else{
-            for(let i=0;i<this.dificultat;i++){
-                this.spawnear_enemics();
-            }
-            
-        }
 
     }
 
@@ -692,7 +686,7 @@ class GameScene extends Phaser.Scene {
         var container2 = this.add.container(this.cameras.main.getWorldPoint(950,600).x, this.cameras.main.getWorldPoint(600,600).y, [ boto_sortir, text_sortir ]).setScale(2);
         boto_sortir.setInteractive();
         boto_sortir.on('pointerup', () => {
-            window.location.assign("../../index.html");
+            window.location.assign("../index.html");
         }, this);
     }
 
@@ -1063,8 +1057,8 @@ class GameScene extends Phaser.Scene {
 
     spawnear_enemics(){
         if (this.n_enemics<this.n_enemics_maxim){
-            var n=Phaser.Math.RND.integerInRange(0, 100);
-            if(n<(this.dificultat*10)){
+            var n=Phaser.Math.RND.integerInRange(0, 300);
+            if(n<(this.dificultat*2)){
                 //se que no haurien de tenir la mateixa probabilitat a cada zona ja que n'hi ha de més petites, però per ara em serveix simplement donaré una més prob a la 5 i 4
                 var fet=false;
                 while (! fet){
@@ -1350,17 +1344,19 @@ class GameScene extends Phaser.Scene {
 
         boto_sortir.setInteractive();
         boto_sortir.on('pointerup', () => {
-            window.location.assign("../../index.html");
+            window.location.assign("../index.html");
         }, this);
 
         boto_guardar.setInteractive();
         boto_guardar.on('pointerup', () => {
             this.save();
-            window.location.assign("../../index.html");
+            window.location.assign("../index.html");
         }, this);
     }
 
 	update (){	
+
+        this.spawnear_enemics();
 
         if (this.cursors.P.isDown && this.estat=="jugant"){
             this.estat="pause";
