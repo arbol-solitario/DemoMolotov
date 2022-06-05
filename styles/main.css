@@ -73,7 +73,7 @@ button.menu-object:hover:not(:active){
 .peu{
     margin-top: 100px;
     background-color: rgb(24,34,53);
-    height: 300px;
+    height: 1000px;
 }
 
 h1{
@@ -89,4 +89,16 @@ h1{
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 40px;
+}
+
+.logo{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    width: 600px;
+}
+
+#exit{
+    text-align: center;
 }
