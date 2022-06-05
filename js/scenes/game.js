@@ -96,53 +96,53 @@ class GameScene extends Phaser.Scene {
     }
 
     preload (){	
-        this.load.image('vorera','../../resources/mapa/background.png');
+        this.load.image('vorera','../resources/mapa/background.png');
 
-        this.load.image('boto', '../../resources/mapa/blue_button00.png');
+        this.load.image('boto', '../resources/mapa/blue_button00.png');
 
-        this.load.image('bala_aliada_pistola','../../resources/bales/bala_aliada_pistola.png');
-        this.load.image('bala_enemiga_pistola','../../resources/bales/bala_enemiga_pistola.png');
-        this.load.image('bala_enemiga_rifle','../../resources/bales/bala_enemiga_rifle.png');
-        this.load.image('bala_aliada_rifle','../../resources/bales/bala_aliada_rifle.png');
-        this.load.image('bala_enemiga_escopeta','../../resources/bales/bala_enemiga_escopeta.png');
-        this.load.image('municio','../../resources/bales/municio.png');
-        this.load.image('escopeta','../../resources/bales/shotgun4.png');
-        this.load.image('rifle','../../resources/bales/assaultrifle3.png');
-        this.load.image('pistola','../../resources/bales/pistol1.png');
+        this.load.image('bala_aliada_pistola','../resources/bales/bala_aliada_pistola.png');
+        this.load.image('bala_enemiga_pistola','../resources/bales/bala_enemiga_pistola.png');
+        this.load.image('bala_enemiga_rifle','../resources/bales/bala_enemiga_rifle.png');
+        this.load.image('bala_aliada_rifle','../resources/bales/bala_aliada_rifle.png');
+        this.load.image('bala_enemiga_escopeta','../resources/bales/bala_enemiga_escopeta.png');
+        this.load.image('municio','../resources/bales/municio.png');
+        this.load.image('escopeta','../resources/bales/shotgun4.png');
+        this.load.image('rifle','../resources/bales/assaultrifle3.png');
+        this.load.image('pistola','../resources/bales/pistol1.png');
 
-        this.load.spritesheet('ma_caminar','../../resources/sense_arma/caminar_ma.png',{frameWidth: 279, frameHeight: 219});
-        this.load.spritesheet('ma_quiet','../../resources/sense_arma/quiet_ma.png',{frameWidth: 289, frameHeight: 224});
-        this.load.spritesheet('ma_atac','../../resources/sense_arma/atacar_ma.png',{frameWidth: 329, frameHeight: 300});
-        this.load.spritesheet('pistola_caminar','../../resources/pistola/caminar_pistola.png',{frameWidth: 258, frameHeight: 220});
-        this.load.spritesheet('pistola_quiet','../../resources/pistola/quiet_pistola.png',{frameWidth: 253, frameHeight: 216});
-        this.load.spritesheet('pistola_atac','../../resources/pistola/atacar_pistola.png',{frameWidth: 255, frameHeight: 215});
-        this.load.spritesheet('pistola_cop','../../resources/pistola/golpejar_pistola.png',{frameWidth: 291, frameHeight: 256});
-        this.load.spritesheet('pistola_recarregar','../../resources/pistola/recarregar_pistola.png',{frameWidth: 260, frameHeight: 230});
-        this.load.spritesheet('escopeta_caminar','../../resources/escopeta/caminar_escopeta.png',{frameWidth: 313, frameHeight: 206});
-        this.load.spritesheet('escopeta_recarregar','../../resources/escopeta/recarregar_escopeta.png',{frameWidth: 322, frameHeight: 217});
-        this.load.spritesheet('escopeta_quiet','../../resources/escopeta/quiet_escopeta.png',{frameWidth: 313, frameHeight: 207});
-        this.load.spritesheet('escopeta_atac','../../resources/escopeta/atac_escopeta.png',{frameWidth: 312, frameHeight: 206});
-        this.load.spritesheet('rifle_caminar','../../resources/rifle/caminar_rifle.png',{frameWidth: 313, frameHeight: 206});
-        this.load.spritesheet('rifle_recarregar','../../resources/rifle/recarregar_rifle.png',{frameWidth: 322, frameHeight: 217});
+        this.load.spritesheet('ma_caminar','../resources/sense_arma/caminar_ma.png',{frameWidth: 279, frameHeight: 219});
+        this.load.spritesheet('ma_quiet','../resources/sense_arma/quiet_ma.png',{frameWidth: 289, frameHeight: 224});
+        this.load.spritesheet('ma_atac','../resources/sense_arma/atacar_ma.png',{frameWidth: 329, frameHeight: 300});
+        this.load.spritesheet('pistola_caminar','../resources/pistola/caminar_pistola.png',{frameWidth: 258, frameHeight: 220});
+        this.load.spritesheet('pistola_quiet','../resources/pistola/quiet_pistola.png',{frameWidth: 253, frameHeight: 216});
+        this.load.spritesheet('pistola_atac','../resources/pistola/atacar_pistola.png',{frameWidth: 255, frameHeight: 215});
+        this.load.spritesheet('pistola_cop','../resources/pistola/golpejar_pistola.png',{frameWidth: 291, frameHeight: 256});
+        this.load.spritesheet('pistola_recarregar','../resources/pistola/recarregar_pistola.png',{frameWidth: 260, frameHeight: 230});
+        this.load.spritesheet('escopeta_caminar','../resources/escopeta/caminar_escopeta.png',{frameWidth: 313, frameHeight: 206});
+        this.load.spritesheet('escopeta_recarregar','../resources/escopeta/recarregar_escopeta.png',{frameWidth: 322, frameHeight: 217});
+        this.load.spritesheet('escopeta_quiet','../resources/escopeta/quiet_escopeta.png',{frameWidth: 313, frameHeight: 207});
+        this.load.spritesheet('escopeta_atac','../resources/escopeta/atac_escopeta.png',{frameWidth: 312, frameHeight: 206});
+        this.load.spritesheet('rifle_caminar','../resources/rifle/caminar_rifle.png',{frameWidth: 313, frameHeight: 206});
+        this.load.spritesheet('rifle_recarregar','../resources/rifle/recarregar_rifle.png',{frameWidth: 322, frameHeight: 217});
 
-        this.load.spritesheet('enemic1','../../resources/sense_arma/caminar_ma.png',{frameWidth: 279, frameHeight: 219});
-        this.load.spritesheet('enemic2','../../resources/pistola/caminar_pistola.png',{frameWidth: 258, frameHeight: 220});
-        this.load.spritesheet('enemic3','../../resources/escopeta/caminar_escopeta.png',{frameWidth: 313, frameHeight: 206});
-        this.load.spritesheet('enemic4','../../resources/rifle/caminar_rifle.png',{frameWidth: 313, frameHeight: 206});
+        this.load.spritesheet('enemic1','../resources/sense_arma/caminar_ma.png',{frameWidth: 279, frameHeight: 219});
+        this.load.spritesheet('enemic2','../resources/pistola/caminar_pistola.png',{frameWidth: 258, frameHeight: 220});
+        this.load.spritesheet('enemic3','../resources/escopeta/caminar_escopeta.png',{frameWidth: 313, frameHeight: 206});
+        this.load.spritesheet('enemic4','../resources/rifle/caminar_rifle.png',{frameWidth: 313, frameHeight: 206});
 
-        this.load.image('carretera1','../../resources/mapa/carretera1.png');
-        this.load.image('carretera2','../../resources/mapa/carretera2.png');
-        this.load.image('interseccio','../../resources/mapa/carretera_buida.png');
+        this.load.image('carretera1','../resources/mapa/carretera1.png');
+        this.load.image('carretera2','../resources/mapa/carretera2.png');
+        this.load.image('interseccio','../resources/mapa/carretera_buida.png');
 
-        this.load.image('edifici1','../../resources/mapa/edifici1.png');
-        this.load.image('edifici2','../../resources/mapa/edifici2.png');
-        this.load.image('cono','../../resources/mapa/cono.png');
+        this.load.image('edifici1','../resources/mapa/edifici1.png');
+        this.load.image('edifici2','../resources/mapa/edifici2.png');
+        this.load.image('cono','../resources/mapa/cono.png');
 
-        this.load.image('cotxe1_esquerra','../../resources/mapa/cotxe1_esquerra.png');
-        this.load.image('cotxe1_amunt','../../resources/mapa/cotxe1_amunt.png');
-        this.load.image('cotxe2_esquerra','../../resources/mapa/cotxe2_esquerra.png');
-        this.load.image('cotxe2_avall','../../resources/mapa/cotxe2_avall.png');
-        this.load.image('cotxe3','../../resources/mapa/cotxe3.png');
+        this.load.image('cotxe1_esquerra','../resources/mapa/cotxe1_esquerra.png');
+        this.load.image('cotxe1_amunt','../resources/mapa/cotxe1_amunt.png');
+        this.load.image('cotxe2_esquerra','../resources/mapa/cotxe2_esquerra.png');
+        this.load.image('cotxe2_avall','../resources/mapa/cotxe2_avall.png');
+        this.load.image('cotxe3','../resources/mapa/cotxe3.png');
 
 	}
     create (){	
