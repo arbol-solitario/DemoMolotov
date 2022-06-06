@@ -686,7 +686,7 @@ class GameScene extends Phaser.Scene {
         var container2 = this.add.container(this.cameras.main.getWorldPoint(950,600).x, this.cameras.main.getWorldPoint(600,600).y, [ boto_sortir, text_sortir ]).setScale(2);
         boto_sortir.setInteractive();
         boto_sortir.on('pointerup', () => {
-            window.location.assign("../index.html");
+            window.location.assign("/index.html");
         }, this);
     }
 
@@ -1314,7 +1314,7 @@ class GameScene extends Phaser.Scene {
         }
         arrayPartides.push(partida);
         localStorage.partides = JSON.stringify(arrayPartides);
-        window.location.assign("../../index.html");
+        window.location.assign("/index.html");
     }
 
     menu_pausa(){
@@ -1344,13 +1344,13 @@ class GameScene extends Phaser.Scene {
 
         boto_sortir.setInteractive();
         boto_sortir.on('pointerup', () => {
-            window.location.assign("../index.html");
+            window.location.assign("/index.html");
         }, this);
 
         boto_guardar.setInteractive();
         boto_guardar.on('pointerup', () => {
             this.save();
-            window.location.assign("../index.html");
+            window.location.assign("/index.html");
         }, this);
     }
 
