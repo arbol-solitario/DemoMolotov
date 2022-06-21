@@ -102,3 +102,25 @@ h1{
 #exit{
     text-align: center;
 }
+
+.logosvg{
+    transform: scale(2.5);
+    fill:rgb(106, 128, 128);
+}
+
+.logosvg:hover{
+    fill:darkslategray;
+}
+
+
+.logosvg:hover #flama2{
+    fill: orange;
+}
+
+.logosvg:hover #flama1{
+    fill: #c3ca00;
+}
+
+.logosvg:hover #drap{
+    fill: darkgrey;
+}
