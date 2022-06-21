@@ -344,7 +344,7 @@ class GameScene extends Phaser.Scene {
         this.loot=this.physics.add.staticGroup();
 
 
-        this.player = this.physics.add.sprite(600,400,'pistola_quiet').setScale(this.escala_personatge).refreshBody(); //Hauré de posar una imatge diferent perquè no afecti el braç a la hitbox per exemple
+        this.player = this.physics.add.sprite(2000,3000,'pistola_quiet').setScale(this.escala_personatge).refreshBody(); //Hauré de posar una imatge diferent perquè no afecti el braç a la hitbox per exemple
         this.player.body.setSize(220,200);//canvio la mida per que les colisions siguin menys molestes a l'hora d'esquivar bales
         this.player.onCollide=true;
         this.player.setBounce(0);
