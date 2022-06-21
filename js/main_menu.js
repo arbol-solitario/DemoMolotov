@@ -8,6 +8,7 @@ function new_game(){
     while (name=="" || !name){
         name = prompt("User name");
     }
+	sessionStorage.clear();
 	sessionStorage.setItem("username", name);
 	
 	loadpage("./html/game.html");

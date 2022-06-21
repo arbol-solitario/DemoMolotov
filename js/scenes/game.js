@@ -352,9 +352,12 @@ class GameScene extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
 
         this.enemics = this.physics.add.group();
-        for(let i=0;i<40; i++){
-            this.spawnear_enemics();
+        if (!l_partida){
+            for(let i=0;i<40; i++){
+                this.spawnear_enemics();
+            }
         }
+
 
         this.physics.add.collider(this.enemics,this.edificis, (enemic,edifici)=>{
             let n=Phaser.Math.RND.integerInRange(0, 1);
@@ -425,6 +428,7 @@ class GameScene extends Phaser.Scene {
             if (enemic.vida<=0){
                 this.punts++;
                 this.afegir_loot(enemic);
+                this.n_enemics--;
                 enemic.destroy();
             }
             else{
@@ -621,33 +625,101 @@ class GameScene extends Phaser.Scene {
 
         if(l_partida){
             this.nom= l_partida.nom;
-            this.player= l_partida.player;
-            this.cotxes= l_partida.cotxes;
+            var obj_jug=JSON.parse(l_partida.player)
+            var camps_jug=[
+                'vida',
+                'ampolla_max',
+                'ampolla',
+                'temps_omplir_max',
+                'arma',
+                'dash',
+                'x',
+                'y'
+            ]
+            for (var i in camps_jug){
+                let camp=camps_jug[i];
+                this.player[camp]=obj_jug[camp];
+            }
+            if (this.player.arma.nom =="pistola"){
+                this.player.arma.centre_cos=this.pistola.centre_cos;
+                this.player.arma.pos_relativa=this.pistola.pos_relativa;
+            }
+            else if (this.player.arma.nom =="escopeta"){
+                this.player.arma.centre_cos=this.escopeta.centre_cos;
+                this.player.arma.pos_relativa=this.escopeta.pos_relativa;
+            }
+            else{
+                this.player.arma.centre_cos=this.rifle.centre_cos;
+                this.player.arma.pos_relativa=this.rifle.pos_relativa;
+            }
+
+            var cotxes=JSON.parse(l_partida.cotxes)
+            var n=0
+            this.cotxes.children.iterate((child) =>{
+                child.benzina=cotxes[n].benzina;
+                child.diposit=cotxes[n].diposit;
+                n++;
+            });
             this.cotxes_buits= l_partida.cotxes_buits;
-            this.cotxe_actual= l_partida.cotxe_actual;
-            this.cotxe_personal= l_partida.cotxe_personal;
+
+            var camps_cotxe_pers=[
+                'litres',
+                'diposit'
+            ]
+            var obj_cotxe_pers=JSON.parse(l_partida.cotxe_personal)
+            for (var i in camps_cotxe_pers){
+                let camp=camps_cotxe_pers[i];
+                this.cotxe_personal[camp]=obj_cotxe_pers[camp];
+            }
     
     
             this.temps= l_partida.temps;
-            this.text_temps= l_partida.text_temps;
             this.punts= l_partida.punts;
-            this.text_punts =l_partida.text_punts;
-            this.text_vida=l_partida.text_vida;
-            this.text_municio=l_partida.text_municio;
-            this.text_arma=l_partida.text_arma;
-            this.text_benzina=l_partida.text_benzina;
 
-            this.enemics= l_partida.enemics;
             this.n_enemics= l_partida.n_enemics;
             this.n_enemics_maxim= l_partida.n_enemics_maxim;
+            var enemics=JSON.parse(l_partida.enemics)
+            console.log(enemics)
+            console.log(this.n_enemics)
+            for (let i=0; i<this.n_enemics; i++){
+                var tipus=enemics[i].tipus;
+                var graphics;
+                if (tipus=="melee") graphics="enemic1";
+                else if (tipus=="pistola") graphics="enemic2";
+                else if (tipus=="escopeta") graphics="enemic3";
+                else graphics="enemic4";
+                var enemic=this.enemics.create(enemics[i].x,enemics[i].y,graphics).setScale(this.escala_personatge).refreshBody();
+                enemic.tipus=enemics[i].tipus;
+                enemic.velocitat=enemics[i].velocitat;
+                enemic.vida=enemics[i].vida;
+                enemic.perseguir_rang=enemics[i].perseguir_rang;
+                enemic.cadencia=enemics[i].cadencia;
+                enemic.dispersio=enemics[i].dispersio;
+                enemic.dany=enemics[i].dany;
+                enemic.tipus_moviment=enemics[i].tipus_moviment;
+                enemic.dir_general=enemics[i].dir_general;
+                enemic.cooldown=false;
+                if (enemic.dany==1) enemic.setTint(0xfaf202);
+                else enemic.setTint(0xa66b12);
+                if (tipus=="pistola"){
+                    enemic.pos_relativa=new Phaser.Math.Vector2(128,76).scale(this.escala_personatge);
+                    enemic.centre_cos=new Phaser.Math.Vector2(128,108).scale(this.escala_personatge);
+                }
+                else if (tipus=="escopeta"){
+                    enemic.pos_relativa=new Phaser.Math.Vector2(157,45).scale(this.escala_personatge);
+                    enemic.centre_cos=new Phaser.Math.Vector2(156,103).scale(this.escala_personatge);
+                }
+                else{
+                    enemic.pos_relativa=new Phaser.Math.Vector2(157,45).scale(this.escala_personatge);
+                    enemic.centre_cos=new Phaser.Math.Vector2(156,103).scale(this.escala_personatge);
+                }
+            }
+
+
             this.dificultat= l_partida.dificultat;
     
-            this.loot= l_partida.loot;
+            //this.loot= l_partida.loot;
     
-            this.pistola= l_partida.pistola;
-            this.escopeta= l_partida.escopeta;
-            this.rifle= l_partida.rifle;
-            this.ganivet= l_partida.ganivet;
         }
 	}
     
@@ -687,6 +759,7 @@ class GameScene extends Phaser.Scene {
         var container2 = this.add.container(this.cameras.main.getWorldPoint(950,600).x, this.cameras.main.getWorldPoint(600,600).y, [ boto_sortir, text_sortir ]).setScale(2);
         boto_sortir.setInteractive();
         boto_sortir.on('pointerup', () => {
+            sessionStorage.clear()
             window.location.assign("../index.html");
         }, this);
     }
@@ -1277,36 +1350,79 @@ class GameScene extends Phaser.Scene {
     }
 
     save(){
+        var camps_jug=[
+            'vida',
+            'ampolla_max',
+            'ampolla',
+            'temps_omplir_max',
+            'arma',
+            'dash',
+            'x',
+            'y'
+        ];
+        var obj_jug={};
+        for (var i in camps_jug){
+            let camp_jug=camps_jug[i];
+            obj_jug[camp_jug]=this.player[camp_jug];
+        }
+
+        var camps_cotxe_pers=[
+            'litres',
+            'diposit'
+        ];
+        var obj_cotxe_pers={};
+        for (var i in camps_cotxe_pers){
+            let camp_cotxe_pers=camps_cotxe_pers[i];
+            obj_cotxe_pers[camp_cotxe_pers]=this.cotxe_personal[camp_cotxe_pers];
+        }
+        var cotxes=[];
+        this.cotxes.children.iterate((child) =>{
+            let cotxe={
+                benzina: child.benzina,
+                diposit: child.diposit
+            };
+            cotxes.push(cotxe);
+            
+        });
+
+
+        var enemics=[];
+        this.enemics.children.iterate((child) =>{
+            let enemic={
+                x: child.x,
+                y: child.y,
+                tipus: child.tipus,
+                velocitat: child.velocitat,
+                vida: child.vida,
+                perseguir_rang: child.perseguir_rang,
+                cadencia: child.cadencia,
+                dispersio: child.dispersio,
+                dany: child.dany,
+                tipus_moviment: child.tipus_moviment,
+                dir_general: child.dir_general
+            };
+            enemics.push(enemic);
+            
+        });
+
         let partida = {
 
             nom: this.nom,
-            player: this.player,
-            cotxes: this.cotxes,
+            player: JSON.stringify(obj_jug),
+            cotxes: JSON.stringify(cotxes),
             cotxes_buits: this.cotxes_buits,
-            cotxe_actual: this.cotxe_actual,
-            cotxe_personal: this.cotxe_personal,
+            cotxe_personal: JSON.stringify(obj_cotxe_pers),
     
     
             temps: this.temps,
-            text_temps: this.text_temps,
             punts: this.punts,
-            text_punts: this.text_punts,
-            text_vida: this.text_vida,
-            text_municio: this.text_municio,
-            text_arma: this.text_arma,
-            text_benzina: this.text_benzina,
 
-            enemics: this.enemics,
+            enemics: JSON.stringify(enemics),
             n_enemics: this.n_enemics,
             n_enemics_maxim: this.n_enemics_maxim,
             dificultat: this.dificultat,
     
-            loot: this.loot,
-    
-            pistola: this.pistola,
-            escopeta: this.escopeta,
-            rifle: this.rifle,
-            ganivet: this.ganivet
+            //loot: this.loot,
         }
         let arrayPartides = [];
         if(localStorage.partides){
@@ -1318,6 +1434,7 @@ class GameScene extends Phaser.Scene {
     }
 
     menu_pausa(){
+        console.log(this.n_enemics)
         var boto_continuar=this.add.image(0, 0, 'boto');
         var text_continuar =this.add.text(-25, 0, 'Resume', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' });
         var boto_sortir=this.add.image(0, 0, 'boto');
@@ -1344,12 +1461,14 @@ class GameScene extends Phaser.Scene {
 
         boto_sortir.setInteractive();
         boto_sortir.on('pointerup', () => {
+            sessionStorage.clear()
             window.location.assign("../index.html");
         }, this);
 
         boto_guardar.setInteractive();
         boto_guardar.on('pointerup', () => {
             this.save();
+            sessionStorage.clear()
             window.location.assign("../index.html");
         }, this);
     }
