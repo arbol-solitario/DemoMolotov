@@ -665,15 +665,16 @@ class GameScene extends Phaser.Scene {
     }
 
     actualitzar_temps(){
-        this.temps--;
-        if (Math.floor(this.temps/60)==0) {
-            this.dificultat+=1;
-            this.n_enemics_maxim+=20;
+        if (this.estat!="pause"){
+            this.temps--;
+            if (Math.floor(this.temps/60)==0) {
+                this.dificultat+=1;
+                this.n_enemics_maxim+=20;
+            }
+            if (this.temps<=0){
+                this.acabar_partida();
+            }
         }
-        if (this.temps<=0){
-            this.acabar_partida();
-        }
-
     }
 
     acabar_partida(){
