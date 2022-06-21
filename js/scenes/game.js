@@ -679,8 +679,6 @@ class GameScene extends Phaser.Scene {
             this.n_enemics= l_partida.n_enemics;
             this.n_enemics_maxim= l_partida.n_enemics_maxim;
             var enemics=JSON.parse(l_partida.enemics)
-            console.log(enemics)
-            console.log(this.n_enemics)
             for (let i=0; i<this.n_enemics; i++){
                 var tipus=enemics[i].tipus;
                 var graphics;
@@ -717,8 +715,20 @@ class GameScene extends Phaser.Scene {
 
 
             this.dificultat= l_partida.dificultat;
-    
-            //this.loot= l_partida.loot;
+            
+
+
+            var loot=JSON.parse(l_partida.loot)
+            for (var i in loot){
+                if (loot[i].tipus=="municio"){
+                    var loot_act=this.loot.create(loot[i].x,loot[i].y,loot[i].tipus).setScale(this.escala_personatge*0.1).refreshBody().setTint(0x888e94);
+                    loot_act.tipus=loot[i].tipus;
+                } 
+                else {
+                    var loot_act=this.loot.create(loot[i].x,loot[i].y,loot[i].tipus).setScale(3).refreshBody().setTint(0x888e94);
+                    loot_act.tipus=loot[i].tipus;
+                }
+            }
     
         }
 	}
@@ -1111,7 +1121,6 @@ class GameScene extends Phaser.Scene {
         }
         else{
             if(this.cursors.space.isUp || this.player.dash.upgrade_acabar){
-                console.log(this.player.dash.upgrade_acabar);
                 this.player.dash.cooldown=true;
                 if(this.player.body.velocity.length()!=0) this.player.setAcceleration(-this.player.dash.direccio.x*2,-this.player.dash.direccio.y*2);
                 var timedEvent = new Phaser.Time.TimerEvent({ delay: 300, callback: this.dash_acabar, callbackScope: this});
@@ -1405,6 +1414,24 @@ class GameScene extends Phaser.Scene {
             
         });
 
+
+
+
+
+
+
+        
+        var loots=[];
+        this.loot.children.iterate((child) =>{
+            let loot={
+                x: child.x,
+                y: child.y,
+                tipus: child.tipus
+            };
+            loots.push(loot);
+            
+        });
+
         let partida = {
 
             nom: this.nom,
@@ -1422,7 +1449,7 @@ class GameScene extends Phaser.Scene {
             n_enemics_maxim: this.n_enemics_maxim,
             dificultat: this.dificultat,
     
-            //loot: this.loot,
+            loot: JSON.stringify(loots),
         }
         let arrayPartides = [];
         if(localStorage.partides){
@@ -1434,7 +1461,6 @@ class GameScene extends Phaser.Scene {
     }
 
     menu_pausa(){
-        console.log(this.n_enemics)
         var boto_continuar=this.add.image(0, 0, 'boto');
         var text_continuar =this.add.text(-25, 0, 'Resume', { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif' });
         var boto_sortir=this.add.image(0, 0, 'boto');
