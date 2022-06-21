@@ -124,3 +124,16 @@ h1{
 .logosvg:hover #drap{
     fill: darkgrey;
 }
+
+.text_com_jugar{
+    text-align: center;
+    font-size: 20px;
+}
+
+.text_com_jugar li{
+    margin: 10px;
+}
+
+.text_com_jugar p{
+    margin: 10px;
+}
